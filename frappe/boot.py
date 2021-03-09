@@ -72,6 +72,7 @@ def get_bootinfo():
 		bootinfo.lang = text_type(bootinfo.lang)
 	bootinfo.versions = {k: v['version'] for k, v in get_versions().items()}
 
+	bootinfo.default_country = get_default_country()
 	bootinfo.error_report_email = frappe.conf.error_report_email or frappe.get_hooks("error_report_email")
 	bootinfo.calendars = sorted(frappe.get_hooks("calendars"))
 	bootinfo.treeviews = frappe.get_hooks("treeviews") or []
@@ -274,3 +275,13 @@ def doctypes_with_show_link_field_title():
 	custom_dts = frappe.get_all("Property Setter", {"field_name": "show_title_field_in_link", "value": 1})
 
 	return [d.name for d in dts + custom_dts if d]
+
+def get_default_country():
+	if not (frappe.db.exists("DocType", "System Settings") and frappe.db.exists("DocType", "Country")):
+		return {}
+
+	country = frappe.get_cached_value("System Settings", "System Settings", "country")
+	if not country:
+		return {}
+
+	return frappe.get_cached_doc("Country", country)

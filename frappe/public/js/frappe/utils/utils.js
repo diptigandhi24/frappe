@@ -620,7 +620,7 @@ Object.assign(frappe.utils, {
 	},
 	format_phone: function(value, frm) {
 		// Add + to avoid libphonenumber-js from returning invalid
-		let country_code = frappe.sys_defaults.country_code;
+		let country_code = frappe.boot.default_country.code;
 
 		if (frappe.meta.has_field(frm.doc.doctype, "country_code")) {
 			country_code = frm.doc.country_code;

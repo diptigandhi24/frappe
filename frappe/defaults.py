@@ -85,11 +85,6 @@ def get_defaults(user=None):
 		userd.update({"user": user, "owner": user})
 		globald.update(userd)
 
-	country = frappe.get_cached_value("System Settings", "System Settings", "country")
-	globald.update({
-		"country": country,
-		"country_code": frappe.get_cached_value("Country", country, "code")
-	})
 	return globald
 
 def clear_user_default(key, user=None):
