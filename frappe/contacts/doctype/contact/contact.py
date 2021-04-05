@@ -15,23 +15,11 @@ from frappe.contacts.address_and_contact import set_link_title
 import functools
 
 class Contact(Document):
-	def autoname(self):
-		# concat first and last name
-		self.name = " ".join(filter(None,
-			[cstr(self.get(f)).strip() for f in ["first_name", "last_name"]]))
-
-		if frappe.db.exists("Contact", self.name):
-			self.name = append_number_if_name_exists('Contact', self.name)
-
-		# concat party name if reqd
-		for link in self.links:
-			self.name = self.name + '-' + link.link_name.strip()
-			break
-
 	def validate(self):
 		self.set_primary_email()
 		self.set_primary("phone")
 		self.set_primary("mobile_no")
+		self.set_title()
 
 		self.set_user()
 
@@ -121,6 +109,17 @@ class Contact(Document):
 			if d.get(field_name) == 1:
 				setattr(self, fieldname, d.phone)
 				break
+
+	def set_title(self):
+		self.title = "{0} {1}".format(self.first_name, self.last_name)
+
+		if frappe.db.exists("Contact", {"title": self.title}):
+			self.title = append_number_if_name_exists('Contact', self.title)
+
+		 # concat party name if reqd
+		for link in self.links:
+			self.title = self.title + '-' + link.link_name.strip()
+			break
 
 def get_default_contact(doctype, name):
 	'''Returns default contact for the given doctype, name'''

@@ -2,6 +2,7 @@
  "allow_events_in_timeline": 1,
  "allow_import": 1,
  "allow_rename": 1,
+ "autoname": "Contact-.####",
  "creation": "2013-01-10 16:34:32",
  "doctype": "DocType",
  "document_type": "Setup",
@@ -39,7 +40,8 @@
   "links",
   "more_info",
   "department",
-  "unsubscribed"
+  "unsubscribed",
+  "title"
  ],
  "fields": [
   {
@@ -244,6 +246,12 @@
    "label": "Company Name"
   },
   {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "title"
+  },
+  {
    "fetch_from": "address.country",
    "fieldname": "country",
    "fieldtype": "Link",
@@ -261,7 +269,7 @@
  "icon": "fa fa-user",
  "idx": 1,
  "image_field": "image",
- "modified": "2021-02-23 06:40:54.152210",
+ "modified": "2021-03-21 22:46:46.221645",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Contact",
@@ -391,6 +399,8 @@
    "role": "All"
   }
  ],
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
- "sort_order": "ASC"
+ "sort_order": "ASC",
+ "title_field": "title"
 }

@@ -8,6 +8,7 @@ from frappe.model.document import Document
 from frappe.utils import cint
 from frappe.model.naming import append_number_if_name_exists
 from frappe.modules.export_file import export_to_files
+from frappe.utils.safe_exec import safe_exec
 
 class NumberCard(Document):
 	def autoname(self):
@@ -57,7 +58,19 @@ def has_permission(doc, ptype, user):
 
 @frappe.whitelist()
 def get_result(doc, filters, to_date=None):
-	doc = frappe.parse_json(doc)
+	number_card = frappe._dict(frappe.parse_json(doc))
+
+	# For Servcer Script Enabled Number Cards
+	if number_card.type == "Script" and number_card.script:
+		doc = {
+			"number_card": number_card,
+			"filters": frappe.parse_json(filters),
+			"to_date":to_date,
+			"data": []
+		}
+		safe_exec(number_card.script, None, doc)
+		return cint(doc.get("data"))
+
 	fields = []
 	sql_function_map = {
 		'Count': 'count',
@@ -67,22 +80,22 @@ def get_result(doc, filters, to_date=None):
 		'Maximum': 'max'
 	}
 
-	function = sql_function_map[doc.function]
+	function = sql_function_map[number_card.function]
 
 	if function == 'count':
 		fields = ['{function}(*) as result'.format(function=function)]
 	else:
-		fields = ['{function}({based_on}) as result'.format(function=function, based_on=doc.aggregate_function_based_on)]
+		fields = ['{function}({based_on}) as result'.format(function=function, based_on=number_card.aggregate_function_based_on)]
 
 	filters = frappe.parse_json(filters)
 
 	if not filters:
-			filters = []
+		filters = []
 
 	if to_date:
-		filters.append([doc.document_type, 'creation', '<', to_date])
+		filters.append([number_card.document_type, 'creation', '<', to_date])
 
-	res = frappe.db.get_list(doc.document_type, fields=fields, filters=filters)
+	res = frappe.db.get_list(number_card.document_type, fields=fields, filters=filters)
 	number = res[0]['result'] if res else 0
 
 	return cint(number)

@@ -8,6 +8,7 @@ import openpyxl
 import xlrd
 import re
 from openpyxl.styles import Font
+from openpyxl.styles.borders import Border, Side
 from openpyxl import load_workbook
 from six import BytesIO, string_types
 
@@ -16,12 +17,14 @@ ILLEGAL_CHARACTERS_RE = re.compile(r'[\000-\010]|[\013-\014]|[\016-\037]')
 def make_xlsx(data, sheet_name, wb=None):
 
 	if wb is None:
-		wb = openpyxl.Workbook(write_only=True)
+		wb = openpyxl.Workbook()
 
 	ws = wb.create_sheet(sheet_name, 0)
 
-	row1 = ws.row_dimensions[1]
-	row1.font = Font(name='Calibri',bold=True)
+	thin_border = Border(left=Side(style='thin',  color="FF000000"),
+                     right=Side(style='thin',  color="FF000000"),
+                     top=Side(style='thin',  color="FF000000"),
+                     bottom=Side(style='thin', color = "FF000000"))
 
 	for row in data:
 		clean_row = []
@@ -38,6 +41,24 @@ def make_xlsx(data, sheet_name, wb=None):
 			clean_row.append(value)
 
 		ws.append(clean_row)
+
+	#changing font and borders for the output cells
+	header_flag = True
+	for row in ws.iter_rows(min_row=1, max_row=ws.max_row, min_col=1):
+		no_of_values = sum([1 if cell.value!=None else 0 for cell in row])
+		for cell in row:
+
+			#change header to bold if there is only 1 value in the whole row - usually header items or of the header row
+			if (no_of_values == 1) or (no_of_values > 1 and header_flag):
+				cell.font = Font(bold=True)
+
+			#add borders to all cells in the table
+			if no_of_values > 1 and cell.value != None:
+				cell.border = thin_border
+
+		#once we've iterated over the header row, change flag
+		if no_of_values > 1:
+			header_flag = False
 
 	xlsx_file = BytesIO()
 	wb.save(xlsx_file)
