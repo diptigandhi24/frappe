@@ -29,11 +29,22 @@ frappe.views.Container = Class.extend({
 		});
 	},
 	add_page: function(label) {
-		var page = $('<div class="content page-container"></div>')
+		let page = $('<div class="row m-0"></div>')
 			.attr('id', "page-" + label)
 			.attr("data-page-route", label)
 			.hide()
 			.appendTo(this.container).get(0);
+
+		$('<div class="content col-md-2 m-0 page-sidebar"></div>')
+			.attr('id', "page-" + label)
+			.attr("data-page-route", label)
+			.appendTo(page).get(0);
+
+		$('<div class="content col-md-10 m-0 page-container"></div>')
+			.attr('id', "page-" + label)
+			.attr("data-page-route", label)
+			.appendTo(page).get(0);
+
 		page.label = label;
 		frappe.pages[label] = page;
 

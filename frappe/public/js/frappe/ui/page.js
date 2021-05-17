@@ -41,6 +41,10 @@ frappe.ui.Page = Class.extend({
 
 	make: function() {
 		this.wrapper = $(this.parent);
+		this.sidebar = this.wrapper.get(0) && this.wrapper.get(0).getElementsByClassName("page-sidebar");
+		this.wrapper = this.wrapper.get(0) && this.wrapper.get(0).getElementsByClassName("page-container");
+		this.wrapper = $(this.wrapper && this.wrapper[0]);
+		this.add_sidebar();
 		this.add_main_section();
 	},
 
@@ -63,6 +67,15 @@ frappe.ui.Page = Class.extend({
 
 	load_lib: function(callback) {
 		frappe.require(this.required_libs, callback);
+	},
+
+	add_sidebar: function() {
+		$(frappe.render_template("sidebar", {
+			"modules": frappe.desk.modules.Modules,
+			"places": frappe.desk.modules.Places,
+			"domains": frappe.desk.modules.Domains,
+			"administration": frappe.desk.modules.Administration
+		})).appendTo(this.sidebar);
 	},
 
 	add_main_section: function() {
