@@ -69,6 +69,7 @@ docfield_properties = {
 	'description': 'Text',
 	'default': 'Text',
 	'precision': 'Select',
+	'display_precision': 'Select',
 	'read_only': 'Check',
 	'length': 'Int',
 	'columns': 'Int',
