@@ -3,6 +3,9 @@ const fs = require('fs');
 const chalk = require('chalk');
 const log = console.log; // eslint-disable-line
 
+const livereload = require('rollup-plugin-livereload');
+const babel = require('rollup-plugin-babel');
+
 const multi_entry = require('rollup-plugin-multi-entry');
 const commonjs = require('rollup-plugin-commonjs');
 const node_resolve = require('rollup-plugin-node-resolve');
@@ -28,7 +31,11 @@ const {
 } = require('./rollup.utils');
 
 function get_rollup_options(output_file, input_files) {
-	if (output_file.endsWith('.js')) {
+	if (output_file.endsWith('.js') ||
+			output_file.endsWith('.ts') ||
+			output_file.endsWith('.tsx') ||
+			output_file.endsWith('.jsx'))
+	{
 		return get_rollup_options_for_js(output_file, input_files);
 	} else if(output_file.endsWith('.css')) {
 		return get_rollup_options_for_css(output_file, input_files);
@@ -67,7 +74,14 @@ function get_rollup_options_for_js(output_file, input_files) {
 			browser: true,
 			customResolveOptions: {
 				paths: node_resolve_paths
-			}
+			},
+			extensions: ['.js', '.jsx']
+		}),
+		babel({
+			exclude: 'node_modules/**',
+			presets: ['@babel/preset-react'],
+			runtimeHelpers: true,
+			extensions: ['.js', '.jsx']
 		}),
 		commonjs(),
 		globals(),
