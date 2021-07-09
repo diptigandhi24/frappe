@@ -1,16 +1,14 @@
-// Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
-// MIT License. See license.txt
+import { Compose } from "../../compose"
+import { SideBarInfoComponent } from "./components/sidebar_info";
 
-// page container
 frappe.provide('frappe.pages');
 frappe.provide('frappe.views');
 
-window.cur_page = null;
-frappe.views.Container = Class.extend({
-	_intro: "Container contains pages inside `#container` and manages \
-			page creation, switching",
-	init: function() {
-		this.container = $('#body_div').get(0);
+export class Container extends Compose(SideBarInfoComponent) {
+	on_construct() {
+		this._intro = "Container contains pages inside `#container` and manages \
+		page creation, switching";
+    this.container = $('#body_div').get(0);
 		this.page = null; // current page
 		this.pagewidth = $(this.container).width();
 		this.pagemargin = 50;
@@ -27,9 +25,10 @@ frappe.views.Container = Class.extend({
 		$(document).bind('rename', function(event, dt, old_name, new_name) {
 			frappe.breadcrumbs.rename(dt, old_name, new_name);
 		});
-	},
-	add_page: function(label) {
-		var page = $('<div class="content page-container"></div>')
+	}
+
+	add_page(label) {
+		const page = $('<div class="content page-container"></div>')
 			.attr('id', "page-" + label)
 			.attr("data-page-route", label)
 			.hide()
@@ -38,21 +37,24 @@ frappe.views.Container = Class.extend({
 		frappe.pages[label] = page;
 
 		return page;
-	},
-	change_to: function(label) {
-		cur_page = this;
+	}
+
+	change_to(label) {
+		const me = this;
+		window.cur_page = this;
 		if(this.page && this.page.label === label) {
 			$(this.page).trigger('show');
 			return;
 		}
 
-		var me = this;
+		let page = null;
 		if(label.tagName) {
 			// if sent the div, get the table
-			var page = label;
+			page = label;
 		} else {
-			var page = frappe.pages[label];
+			page = frappe.pages[label];
 		}
+		
 		if(!page) {
 			console.log(__('Page not found')+ ': ' + label);
 			return;
@@ -88,22 +90,9 @@ frappe.views.Container = Class.extend({
 		frappe.breadcrumbs.update();
 
 		return this.page;
-	},
-	has_sidebar: function() {
-		var flag = 0;
-		var route_str = frappe.get_route_str();
-		// check in frappe.ui.pages
-		flag = frappe.ui.pages[route_str] && !frappe.ui.pages[route_str].single_column;
+	}
 
-		// sometimes frappe.ui.pages is updated later,
-		// so check the dom directly
-		if(!flag) {
-			var page_route = route_str.split('/').slice(0, 2).join('/');
-			flag = $(`.page-container[data-page-route="${page_route}"] .layout-side-section`).length ? 1 : 0;
-		}
-
-		return flag;
-	},
-});
-
-
+	has_sidebar() {
+    return this[SideBarInfoComponent].has_sidebar();
+	}
+}

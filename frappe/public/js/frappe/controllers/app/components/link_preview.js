@@ -1,11 +1,13 @@
-frappe.ui.LinkPreview = class {
+import { ComponentDependencies } from "../../../compose";
+import { BootInfoComponent } from "./boot_info";
 
-	constructor() {
+export class LinkPreviewComponent extends ComponentDependencies(BootInfoComponent) {
+  onInit() {
 		this.popovers_list = [];
 		this.LINK_CLASSES = 'a[data-doctype], input[data-fieldtype="Link"], .popover';
 		this.popover_timeout = null;
 		this.setup_events();
-	}
+  }
 
 	setup_events() {
 		$(document.body).on('mouseover', this.LINK_CLASSES, (e) => {
@@ -22,7 +24,6 @@ frappe.ui.LinkPreview = class {
 			}
 		});
 		this.handle_popover_hide();
-
 	}
 
 	identify_doc() {
@@ -216,4 +217,4 @@ frappe.ui.LinkPreview = class {
 		return popover_content;
 	}
 
-};
+}

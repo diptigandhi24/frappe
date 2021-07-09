@@ -193,7 +193,6 @@
 		"public/js/frappe/upload.js",
 		"public/js/frappe/ui/tree.js",
 
-		"public/js/frappe/views/container.js",
 		"public/js/frappe/views/breadcrumbs.js",
 		"public/js/frappe/views/factory.js",
 		"public/js/frappe/views/pageview.js",

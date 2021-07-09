@@ -613,14 +613,16 @@ frappe.chat.profile.create = (fields, fn) => {
 		fields = frappe._.as_array(fields)
 
 	return new Promise(resolve => {
-		frappe.call("frappe.chat.doctype.chat_profile.chat_profile.create",
-			{ user: frappe.session.user, exists_ok: true, fields: fields },
-				response => {
-					if ( fn )
-						fn(response.message)
+		// frappe.call("frappe.chat.doctype.chat_profile.chat_profile.create",
+		// 	{ user: frappe.session.user, exists_ok: true, fields: fields },
+		// 		response => {
+		// 			if ( fn )
+		// 				fn(response.message)
 
-					resolve(response.message)
-				})
+		// 			resolve(response.message)
+		// 		})
+
+		resolve({enable_chat: false});
 	})
 }
 
