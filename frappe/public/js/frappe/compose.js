@@ -13,17 +13,33 @@ export function ComponentDependencies(...classes) {
   return ComponentWithDeps;
 }
 
+export function withMixins(constructor, ...methods) {
+  return [constructor, methods];
+}
+
 /**
  * Helper function that composes multiple components into a parent controller.
  * All components will be accessible via their class symbol on the instance created
  * from an extending class.
  * @param  {...FunctionConstructor} classes
  */
-export function Compose(...classes) {
+export function Compose(...inClasses) {
   // block access to components and events to keep component clean
   // components and events will be accessible only through api
-  const childComponents = new Map();
-  const events = new Map();
+  const __childComponents = new Map();
+  const __events = new Map();
+  const classes = [];
+  const mixinMap = inClasses.reduce((p, c) => {
+    if ( c && c.constructor && c.constructor === Array ) {
+      const [cls, rest] = c;
+      p.set(cls, rest);
+      classes.push(cls);
+    } else {
+      classes.push(c);
+    }
+
+    return p;
+  }, new Map());
 
   /**
    * Builds a sorted dependency list of component classes
@@ -37,15 +53,22 @@ export function Compose(...classes) {
     let max = 50;
     do {
       const cls = deps.shift();
-      flatDependencies.add(cls);
-      if (cls.dependencies) {
-        for (const d of cls.dependencies) {
-          if (!flatDependencies.has(d)) {
-            deps.push(d);
+      if ( cls ) {
+        flatDependencies.add(cls);
+        if (cls.dependencies) {
+          for (const d of cls.dependencies) {
+            let dep = d;
+            if (d.constructor && d.constructor === Array) {
+              dep = d[0];
+            }
+
+            if (!flatDependencies.has(dep)) {
+              deps.push(dep);
+            }
           }
         }
+        max--;
       }
-      max--;
     } while (deps.length > 0 && max > 0);
 
     const result = Array.from(flatDependencies.values()).sort((a, b) => {
@@ -67,13 +90,12 @@ export function Compose(...classes) {
    * @param {*} thisObj The compose class to inject components.
    * @param {*} classes List of component classes to instantiate and inject.
    */
-  const initComponentDeps = (thisObj, classes) => {
+  const buildComponentDepsKeys = (thisObj, classes) => {
     const dependencies = buildDependencyList(classes);
-    console.info(`[compose] ${dependencies.map(d => d.name).join(',')}`)
     for (const cls of dependencies) {
       // Then Initialize components.
       const instance = new cls(thisObj);
-      childComponents.set(cls, instance);
+      __childComponents.set(cls, instance);
       Reflect.set(thisObj, cls, instance);
     }
   };
@@ -83,12 +105,34 @@ export function Compose(...classes) {
    */
   return class {
     constructor(...args) {
-      initComponentDeps(this, classes);
+      this.__construct_args = args;
+      console.log("[AT CONSTRUCT] ", this.constructor.name, this.__construct_args);
+      buildComponentDepsKeys(this, classes);
+
+      // syntetic method wrapping for mixins to keep bindins intact
+      const synthetic = function(thisArg, cls, method) {
+        return (function(...args) {
+          const component = Reflect.get(this, cls);
+          const fn = Reflect.get(component, method);
+          return Reflect.apply(fn, component, args);
+        }).bind(thisArg);
+      }
+
+      // Mixin desired component methods
+      for(const [cls, mixins] of Array.from(mixinMap.entries())) {
+        for(const method of mixins) {
+          if ( !Reflect.has(this, method) ) {
+            Reflect.set(this, method, synthetic(this, cls, method));
+          }
+        }
+      }
+
       this.initialized = false;
     }
 
     async init() {
-      await this.broadcast("construct");
+      console.log("[CALLING CONSTRUCT] ", this.constructor.name, this.__construct_args);
+      await this.broadcast("construct", ...this.__construct_args);
       await this.broadcast("init");
       this.initialized = true;
       await this.broadcast("after_init");
@@ -98,7 +142,7 @@ export function Compose(...classes) {
      * Lists component instances attached to this controller
      */
     get components() {
-      return childComponents.values();
+      return __childComponents.values();
     }
 
     /**
@@ -107,11 +151,11 @@ export function Compose(...classes) {
      * @param {*} callback A callback function.
      */
     on(event, callback) {
-      if (!events.has(event)) {
-        events.add(event, new Set());
+      if (!__events.has(event)) {
+        __events.set(event, new Set());
       }
 
-      events.get(event).add(callback);
+      __events.get(event).add(callback);
 
       return this;
     }
@@ -122,8 +166,8 @@ export function Compose(...classes) {
      * @param {*} callback A callback function originally bound.
      */
     off(event, callback) {
-      if (events.has(event)) {
-        events.get(event).delete(callback);
+      if (__events.has(event)) {
+        __events.get(event).delete(callback);
       }
 
       return this;
@@ -136,8 +180,8 @@ export function Compose(...classes) {
      */
     async broadcast(event, ...args) {
       const eventName = `on_${event}`;
-      const instances = [this, ...Array.from(childComponents.values())];
-      console.info(`[broadcast] ${event}/${eventName}: `, instances);
+      const instances = [this, ...Array.from(__childComponents.values())];
+      console.info(`[broadcast] ${this.constructor.name} :  ${event}/${eventName}: `, instances);
 
       for (const component of instances) {
         if (Reflect.has(component, eventName)) {
@@ -147,8 +191,8 @@ export function Compose(...classes) {
         }
       }
 
-      if (events.has(event)) {
-        for (const listener of events.get(event).values()) {
+      if (__events.has(event)) {
+        for (const listener of __events.get(event).values()) {
           await listener(this, ...args);
         }
       }

@@ -1,35 +1,62 @@
-// Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
-// MIT License. See license.txt
+import { Component } from "../../../component";
 
-frappe.breadcrumbs = {
-	all: {},
+export class BreadcrumbsComponent extends Component {
+  on_construct() {
+    this.all = {};
 
-	preferred: {
-		"File": "",
-		"Dashboard": "Customization",
-		"Dashboard Chart": "Customization",
-		"Dashboard Chart Source": "Customization",
-	},
+    this.preferred = {
+      "File": "",
+      "Dashboard": "Customization",
+      "Dashboard Chart": "Customization",
+      "Dashboard Chart Source": "Customization",
+    };
 
-	module_map: {
-		'Core': 'Settings',
-		'Email': 'Settings',
-		'Custom': 'Settings',
-		'Workflow': 'Settings',
-		'Printing': 'Settings',
-		'Automation': 'Settings',
-		'Setup': 'Settings',
-	},
+    this.module_map = {
+      'Core': 'Settings',
+      'Email': 'Settings',
+      'Custom': 'Settings',
+      'Workflow': 'Settings',
+      'Printing': 'Settings',
+      'Automation': 'Settings',
+      'Setup': 'Settings',
+		};
 
-	set_doctype_module: function(doctype, module) {
+		if ( !frappe.breadcrumbs ) {
+			// Map existing api
+			frappe.breadcrumbs = this;
+		}
+	}
+	
+	on_init() {
+		$(document).bind('rename', function(event, dt, old_name, new_name) {
+			this.rename(dt, old_name, new_name);
+		});
+	}
+
+	/**
+	 * Sets the doctype preference for a certain module
+	 * @param {*} doctype The docytpe name
+	 * @param {*} module The module name
+	 */
+	set_doctype_module(doctype, module) {
 		localStorage["preferred_breadcrumbs:" + doctype] = module;
-	},
+	}
 
-	get_doctype_module: function(doctype) {
+	/**
+	 * Returns the prefered module of the provided doctype
+	 * @param {*} doctype The doctype name
+	 */
+	get_doctype_module(doctype) {
 		return localStorage["preferred_breadcrumbs:" + doctype];
-	},
+	}
 
-	add: function(module, doctype, type) {
+	/**
+	 * Adds a module, doctype and type to the breadcrumb and rerenders
+	 * @param {*} module The module name
+	 * @param {*} doctype The doctype name
+	 * @param {*} type The breadcrumb type. Allowed values: undefined, "Custom"
+	 */
+	add(module, doctype, type) {
 		let obj;
 		if (typeof module === 'object') {
 			obj = module;
@@ -41,16 +68,23 @@ frappe.breadcrumbs = {
 			}
 		}
 
-		frappe.breadcrumbs.all[frappe.breadcrumbs.current_page()] = obj;
-		frappe.breadcrumbs.update();
-	},
+		this.all[this.current_page()] = obj;
+		this.update();
+	}
 
-	current_page: function() {
+	/**
+	 * Returns the current page route
+	 * @returns {string} The page route
+	 */
+	current_page() {
 		return frappe.get_route_str();
-	},
+	}
 
-	update: function() {
-		var breadcrumbs = frappe.breadcrumbs.all[frappe.breadcrumbs.current_page()];
+	/**
+	 * Updates the breadcrumb rendering
+	 */
+	update() {
+		var breadcrumbs = this.all[this.current_page()];
 
 		if(!frappe.visible_modules) {
 			frappe.visible_modules = $.map(frappe.boot.allowed_modules, (m) => {
@@ -73,18 +107,18 @@ frappe.breadcrumbs = {
 		}
 
 		// get preferred module for breadcrumbs, based on sent via module
-		var from_module = frappe.breadcrumbs.get_doctype_module(breadcrumbs.doctype);
+		var from_module = this.get_doctype_module(breadcrumbs.doctype);
 
 		if(from_module) {
 			breadcrumbs.module = from_module;
-		} else if(frappe.breadcrumbs.preferred[breadcrumbs.doctype]!==undefined) {
+		} else if(this.preferred[breadcrumbs.doctype]!==undefined) {
 			// get preferred module for breadcrumbs
-			breadcrumbs.module = frappe.breadcrumbs.preferred[breadcrumbs.doctype];
+			breadcrumbs.module = this.preferred[breadcrumbs.doctype];
 		}
 
 		if(breadcrumbs.module) {
-			if (frappe.breadcrumbs.module_map[breadcrumbs.module]) {
-				breadcrumbs.module = frappe.breadcrumbs.module_map[breadcrumbs.module];
+			if (this.module_map[breadcrumbs.module]) {
+				breadcrumbs.module = this.module_map[breadcrumbs.module];
 			}
 
 			if(frappe.get_module(breadcrumbs.module)) {
@@ -120,14 +154,18 @@ frappe.breadcrumbs = {
 		}
 
 		$("body").removeClass("no-breadcrumbs");
-	},
-
-	rename: function(doctype, old_name, new_name) {
-		var old_route_str = ["Form", doctype, old_name].join("/");
-		var new_route_str = ["Form", doctype, new_name].join("/");
-		frappe.breadcrumbs.all[new_route_str] = frappe.breadcrumbs.all[old_route_str];
-		delete frappe.breadcrumbs.all[old_route_str];
 	}
 
+	/**
+	 * Updates breadcrumb when a doctype changes name
+	 * @param {*} doctype The doctype performing name change
+	 * @param {*} old_name The old name
+	 * @param {*} new_name The new name
+	 */
+	rename(doctype, old_name, new_name) {
+		var old_route_str = ["Form", doctype, old_name].join("/");
+		var new_route_str = ["Form", doctype, new_name].join("/");
+		this.all[new_route_str] = this.all[old_route_str];
+		delete this.all[old_route_str];
+	}
 }
-

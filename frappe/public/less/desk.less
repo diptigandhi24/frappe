@@ -3,6 +3,42 @@
 @import "common.less";
 @import "print.less";
 
+body {
+	overflow: hidden;
+}
+
+.main-section-wrapper {
+	overflow: auto;
+}
+
+.main-section {
+	display: flex;
+	flex-direction: row;
+	height: 100%;
+
+	> * {
+		flex: 1 1 auto;
+	}
+
+	b-navigation {
+		flex: 0 0 auto;
+		position: sticky;
+		top: 0;
+	}
+
+	.main-section-wrapper {
+		> header {
+			position: sticky;
+			top: 0;
+			z-index: 102;
+
+			.navbar {
+				margin-bottom: 0;
+			}
+		}
+	}	
+}
+
 .nav-pills a, .nav-pills a:hover {
 	border-bottom: none;
 }
@@ -613,6 +649,7 @@ li.user-progress {
 	}
 
 	.layout-side-section {
+		padding-left: 1rem;
 		.module-sidebar-nav {
 			margin-top: 0px;
 		}

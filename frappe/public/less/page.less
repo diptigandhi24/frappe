@@ -1,20 +1,15 @@
 @import "variables.less";
 @import "mixins.less";
 
-.page-container {
-	margin-top: 40px;
-}
-
 .page-head {
+	display: flex;
+	flex-direction: column;
 	border-bottom:1px solid @border-color;
 	height: 70px;
-	position: fixed;
-	left: 0;
-	right: 0;
-	top: 41px;
-	margin: auto;
+	position: sticky;
+	top: 42px;
 	background-color: #fff;
-	z-index: 101;
+	z-index: 102;
 }
 
 .sub-heading {
@@ -25,10 +20,28 @@
 	overflow: visible;
 }
 
+.page-body {
+	display: flex;
+	flex-direction: column;
+
+	.page-wrapper {
+		display: flex;
+		flex-direction: row;
+
+		.page-content-wrapper {
+			flex: 1 1 auto;
+
+			.page-content {
+				margin: 0 1rem;
+			}
+		}
+	}
+}
+
+
 @media(min-width: @screen-xs) {
 	.page-body {
 		overflow-x: hidden;
-		min-height: calc(100vh - 40px);
 	}
 }
 
@@ -95,16 +108,40 @@
 	}
 }
 
-.page-content {
-	margin-top: 70px;
-}
-
 /* show menu aligned to the right border of the dropdown */
 .page-actions .dropdown-menu,
 .form-inner-toolbar .dropdown-menu {
 	right: 0px;
 	left: auto;
 	z-index: 100;
+}
+
+.layout-main {
+	display: flex;
+	flex-direction: row;
+
+	.layout-navigation {
+		width: 1rem;
+	}
+
+	.layout-side-section {
+		flex: 0 0 auto;
+	}
+
+	.layout-main-section-wrapper {
+		display: flex;
+		flex-direction: column;
+		flex: 1 1 auto;
+
+		.layout-main-section {
+			flex: 1 1 auto;
+		}
+
+		.layout-footer {
+			flex: 0 0 auto;
+		}
+	}
+
 }
 
 .layout-main-section {

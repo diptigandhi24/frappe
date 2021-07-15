@@ -2,6 +2,9 @@ import { BootInfoComponent } from "./boot_info";
 import { Component } from "../../../component";
 
 export class SessionComponent extends Component {
+  /**
+   * Logs user out
+   */
 	async logout() {
 		frappe.app.logged_out = true;
 		const r = frappe.call({
@@ -12,10 +15,16 @@ export class SessionComponent extends Component {
     this.redirect_to_login();
   }
 
+  /**
+   * Reroutes user to login page
+   */
   redirect_to_login() {
 		window.location.href = '/';
   }
-  
+	
+  /**
+   * trigger session expiration behaviour
+   */
 	handle_session_expired() {
 		if(!frappe.app.session_expired_dialog) {
 			const dialog = new frappe.ui.Dialog({

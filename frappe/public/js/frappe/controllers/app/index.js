@@ -1,4 +1,4 @@
-import { Compose } from "../../compose";
+import { Compose, withMixins } from "../../compose";
 import { VueSetupComponent } from "./components/vue_setup";
 import { BootInfoComponent } from "./components/boot_info";
 import { MetadataCacheComponent } from "./components/metadata_cache";
@@ -29,6 +29,7 @@ import { ModulesComponent } from "../common/components/modules";
 import { LinkPreviewComponent } from "./components/link_preview";
 import { SessionComponent } from "./components/session";
 import { ActionsComponent } from "../common/components/actions";
+import { BreadcrumbsComponent } from "../common/components/breadcrumbs";
 
 frappe.provide('frappe.app');
 frappe.provide('frappe.desk');
@@ -64,8 +65,15 @@ export class Application extends Compose(
   DeveloperUtilsComponent,
   ModulesComponent,
   LinkPreviewComponent,
-  SessionComponent,
-  ActionsComponent
+  withMixins(SessionComponent, 
+    "handle_session_expired", 
+    "redirect_to_login", 
+    "logout"
+  ),
+  withMixins(ActionsComponent,
+    "trigger_primary_action"
+  ),
+  BreadcrumbsComponent
 ) {
 
   async on_after_init() {
@@ -83,31 +91,4 @@ export class Application extends Compose(
     frappe.get_module = (...args) => this[ModulesComponent].get_module(...args);
   }
 
-  /**
-   * trigger session expiration behaviour
-   */
-  handle_session_expired() {
-    this[SessionComponent].handle_session_expired();
-  }
-
-  /**
-   * Logs user out
-   */
-  async logout() {
-    return await this[SessionComponent].logout();
-  }
-
-  /**
-   * Reroutes user to login page
-   */
-  redirect_to_login() {
-    this[SessionComponent].redirect_to_login();
-  }
-
-  /**
-   * Triggers primary action on the current page
-   */
-  trigger_primary_action() {
-    this[ActionsComponent].trigger_primary_action();
-  }
 }

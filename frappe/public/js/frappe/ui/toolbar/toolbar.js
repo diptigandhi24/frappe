@@ -25,7 +25,10 @@ frappe.ui.toolbar.Toolbar = Class.extend({
 
 		this.bind_events();
 
-		$(document).trigger('toolbar_setup');
+		frappe.app.on("startup", () => {
+			console.log("Toolbar setup");
+			$(document).trigger('toolbar_setup');
+		});
 	},
 
 	bind_events: function() {

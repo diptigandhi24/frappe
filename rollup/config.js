@@ -17,6 +17,8 @@ const frappe_html = require('./frappe-html-plugin');
 const less_loader = require('./less-loader');
 const builtins = require('rollup-plugin-node-builtins');
 const globals = require('rollup-plugin-node-globals');
+const react = require('react');
+const reactDom = require('react-dom');
 
 const production = process.env.FRAPPE_ENV === 'production';
 
@@ -56,8 +58,14 @@ function get_rollup_options_for_js(output_file, input_files) {
 		multi_entry(),
 		// .html -> .js
 		frappe_html(),
+		postcss({
+			autoModules: true,
+			minimize: true,
+			sourceMap: true,
+			use: ['sass']
+		}),
 		// ignore css imports
-		ignore_css(),
+		//ignore_css(),
 		// .vue -> .js
 		vue.default(),
 		// ES6 -> ES5
@@ -94,7 +102,7 @@ function get_rollup_options_for_js(output_file, input_files) {
 			input: input_files,
 			plugins: plugins,
 			context: 'window',
-			external: ['jquery'],
+			external: ['jquery', 'react', 'react-dom'],
 			onwarn({ code, message, loc, frame }) {
 				// skip warnings
 				if (['EVAL', 'SOURCEMAP_BROKEN', 'NAMESPACE_CONFLICT'].includes(code)) return;
@@ -120,7 +128,9 @@ function get_rollup_options_for_js(output_file, input_files) {
 			format: 'iife',
 			name: 'Rollup',
 			globals: {
-				'jquery': 'window.jQuery'
+				'jquery': 'window.jQuery',
+				'react': 'window.React',
+				'react-dom': 'window.ReactDOM'
 			},
 			sourcemap: true
 		}
