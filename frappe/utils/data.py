@@ -119,7 +119,7 @@ def date_diff(string_ed_date, string_st_date):
 def month_diff(string_ed_date, string_st_date):
 	ed_date = getdate(string_ed_date)
 	st_date = getdate(string_st_date)
-	return (ed_date.year - st_date.year) * 12 + ed_date.month - st_date.month + 1
+	return (ed_date.year - st_date.year) * 12 + ed_date.month - st_date.month
 
 def time_diff(string_ed_date, string_st_date):
 	return get_datetime(string_ed_date) - get_datetime(string_st_date)
@@ -332,11 +332,25 @@ def flt(s, precision=None):
 
 	return num
 
-def cint(s):
-	"""Convert to integer"""
-	try: num = int(float(s))
-	except: num = 0
-	return num
+def cint(s, default=0):
+	"""Convert to integer
+
+		:param s: Number in string or other numeric format.
+		:returns: Converted number in python integer type.
+
+		Returns default if input can not be converted to integer.
+
+		Examples:
+		>>> cint("100")
+		100
+		>>> cint("a")
+		0
+
+	"""
+	try:
+		return int(float(s))
+	except Exception:
+		return default
 
 def floor(s):
 	"""
