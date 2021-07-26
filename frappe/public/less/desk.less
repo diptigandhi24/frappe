@@ -7,23 +7,59 @@ body {
 	overflow: hidden;
 }
 
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
 .main-section-wrapper {
 	overflow: auto;
 }
 
 .main-section {
-	display: flex;
-	flex-direction: row;
+	display: grid;
+	grid-template:
+		"nav header coms"
+		"nav content coms"
+		"nav footer coms";
+	grid-template-rows: 32px auto 12px;
+	grid-template-columns: 64px auto 16px;
+	gap: 0;
 	height: 100%;
 
-	> * {
-		flex: 1 1 auto;
+	#main-nav {
+		grid-area: nav;
 	}
 
-	b-navigation {
-		flex: 0 0 auto;
-		position: sticky;
-		top: 0;
+	#coms-nav {
+		grid-area: coms;
+	}
+
+	header {
+		grid-area: header;
+	}
+
+	#body_div {
+		grid-area: content;
+	}
+
+	footer {
+		grid-area: footer;
 	}
 
 	.main-section-wrapper {

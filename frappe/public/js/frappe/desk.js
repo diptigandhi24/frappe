@@ -4,7 +4,7 @@
 
 // __('Modules') __('Domains') __('Places') __('Administration') # for translation, don't remove
 
-import { Application } from "./controllers/app";
+import { Application } from "../bloomstack/controllers/app";
 
 $(document).ready(function() {
 	if(!frappe.utils.supportsES6) {

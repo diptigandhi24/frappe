@@ -1,0 +1,21 @@
+IMG {
+  display: inline-block;
+  overflow: hidden;
+
+  &.fill {
+    object-fit: fill;
+  }
+
+  &.cover {
+    object-fit: cover;
+  }
+
+  &.contain {
+    object-fit: contain;
+  }
+  
+  &.cover {
+    object-fit: scale-down;
+  }
+}
+

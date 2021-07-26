@@ -151,8 +151,8 @@
 		"public/js/frappe/roles_editor.js",
 		"public/js/frappe/microtemplate.js",
 
-		"public/js/frappe/ui/page.html",
-		"public/js/frappe/ui/page.js",
+		"public/js/bloomstack/controllers/page/page.html",
+		
 		"public/js/frappe/ui/slides.js",
 		"public/js/frappe/ui/find.js",
 		"public/js/frappe/ui/iconbar.js",

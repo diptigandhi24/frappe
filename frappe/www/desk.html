@@ -30,12 +30,35 @@
 		<img src="{{ splash_image or "/assets/frappe/images/frappe-framework-logo.png" }}">
 	</div>
 	<div class="main-section">
-		<b-navigation></b-navigation>
-		<div class="main-section-wrapper">
-			<header></header>
-			<div id="body_div"></div>
-			<footer></footer>
-		</div>
+		<b-navbar id="main-nav"
+			direction="column"
+			size="64px"
+			direction[sm]="row"
+			direction[md]="row"
+			:direction='{"sm": "row", "md": "column"}'
+			:size='{"sm": "64px", "md": "64px", "xl": "96px"}'
+			theme="overlay"
+		>
+			<b-props breakpoint="sm" ></b-props>
+			<b-navlogo></b-navlogo>
+			<b-spacer></b-spacer>
+			<b-menu-item id="menu-user-profile" label="Settings"></b-menu-item>
+		</b-navbar>
+		<header>
+			<b-navbar id="top-nav" direction="row" size="48px" theme="clean">
+				<b-breadcrumb></b-breadcrumb>
+				<b-spacer></b-spacer>
+				<b-awesomebar></b-awesomebar>
+				<b-spacer></b-spacer>
+			</b-navbar>
+		</header>
+		<div id="body_div"></div>
+		<b-navbar id="coms-nav" direction="column"  size="32px" theme="clean">
+			<b-menu-item icon="bell"></b-menu-item>
+			<b-menu-item icon="chat"></b-menu-item>
+			<b-menu-item icon="timeline"></b-menu-item>
+		</b-navbar>
+		<footer></footer>
 	</div>
 
 	<script type="text/javascript" src="/assets/frappe/js/lib/jquery/jquery.min.js"></script>

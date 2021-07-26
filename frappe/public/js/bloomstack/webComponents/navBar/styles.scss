@@ -1,0 +1,18 @@
+:host {
+  --c-brand: #F96E46;
+  --c-background: #004960;
+}
+
+.navigation {
+  /* Stretch content vertically */
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 16px;
+  min-width: 16px;
+
+  margin: 0;
+  padding: 0;
+
+  /* Defaults */
+  background-color: var(--c-background);
+}
