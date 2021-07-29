@@ -75,6 +75,7 @@ class User(Document):
 		ask_pass_update()
 		self.validate_roles()
 		self.validate_user_image()
+		self.set_time_zone()
 
 		if self.language == "Loading...":
 			self.language = None
@@ -92,6 +93,12 @@ class User(Document):
 		if self.user_image and len(self.user_image) > 2000:
 			frappe.throw(_("Not a valid User Image."))
 
+	def set_time_zone(self):
+		from frappe.utils import get_time_zone
+
+		if not self.time_zone:
+			self.time_zone = get_time_zone()
+
 	def on_update(self):
 		# clear new password
 		self.share_with_self()
@@ -102,6 +109,9 @@ class User(Document):
 		create_contact(self, ignore_mandatory=True)
 		if self.name not in ('Administrator', 'Guest') and not self.user_image:
 			frappe.enqueue('frappe.core.doctype.user.user.update_gravatar', name=self.name)
+
+		if self.time_zone:
+			frappe.defaults.set_default("time_zone", self.time_zone, self.name)
 
 	def has_website_permission(self, ptype, user, verbose=False):
 		"""Returns true if current user is the session user"""
