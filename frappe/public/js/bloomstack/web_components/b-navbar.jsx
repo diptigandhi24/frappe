@@ -1,11 +1,10 @@
-import { withReactWebComponent } from "../../react/with_react_web_component"
 import clsx from 'clsx';
-import style from "./styles.scss";
-import { toStr, fromJSON } from "../utils";
+import style from "./b-navbar.scss";
+import { to_str, parse_json } from "./utils";
 import { useState } from "react";
+import { make_react_component } from '../controllers/web_components';
 
 export const NavBar = (props) => {
-  console.log("NAVBAR PROPS: ", props);
   const {direction, children, size, theme} = props;
   const [appLogoUrl, setAppLogoUrl] = useState("");
   const style = {
@@ -29,19 +28,14 @@ export const NavBar = (props) => {
   </div>
 }
 
-withReactWebComponent({
+make_react_component({
   tag: "b-navbar",
   stylesheets: ["/assets/frappe/css/octicons/octicons.css"],
   style,
   component: NavBar,
   props: {
-    direction: toStr,
-    size: toStr,
-    theme: toStr,
-    ":direction": fromJSON,
-    ":size": fromJSON,
-    ":direction[sm]": toStr,
-    "direction[md]": toStr,
-    ":direction!sm"
+    direction: to_str,
+    size: to_str,
+    theme: to_str
   }
 });

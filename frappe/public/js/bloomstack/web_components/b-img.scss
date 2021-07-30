@@ -1,6 +1,9 @@
 IMG {
   display: inline-block;
   overflow: hidden;
+  width: 100%;
+  padding: 15px;
+  box-sizing: border-box;
 
   &.fill {
     object-fit: fill;

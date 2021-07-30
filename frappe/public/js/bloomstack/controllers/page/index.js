@@ -2,7 +2,7 @@
 // MIT License. See license.txt
 
 import { Compose } from "../../compose";
-import "../../webComponents";
+import "../../web_components";
 
 /**
  * Make a standard page layout with a toolbar and title

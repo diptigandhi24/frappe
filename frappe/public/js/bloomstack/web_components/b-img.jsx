@@ -1,19 +1,19 @@
-import { withReactWebComponent } from "../../react/with_react_web_component"
 import clsx from "clsx";
-import style from "./styles.scss";
-import { toStr } from "../utils";
+import style from "./b-img.scss";
+import { to_str } from "./utils";
+import { make_react_component } from "../controllers/web_components";
 
 export const Img = ({src, fit, backgroundColor, className}) => {
   const style = backgroundColor?{backgroundColor}:{};
   return <img src={src} style={style} className={clsx(className, fit)} />
 }
 
-withReactWebComponent({
+make_react_component({
   tag: "b-img",
   style,
   component: Img,
   props: {
-    src: toStr,
-    fit: toStr
+    src: to_str,
+    fit: to_str
   }
 });
