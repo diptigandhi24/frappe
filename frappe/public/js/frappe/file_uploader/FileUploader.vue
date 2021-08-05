@@ -161,6 +161,9 @@ export default {
 		},
 		upload_notes: {
 			default: null // "Images or video, upto 2MB"
+		},
+		__islocal: {
+			default: false
 		}
 	},
 	components: {
@@ -276,7 +279,7 @@ export default {
 			if (this.show_web_link) {
 				return this.upload_via_web_link();
 			}
-			if (this.as_dataurl) {
+			if (this.as_dataurl || this.__islocal) {
 				return this.return_as_dataurl();
 			}
 			return frappe.run_serially(
