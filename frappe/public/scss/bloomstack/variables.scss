@@ -1,0 +1,46 @@
+:host {
+  --c-main-meadow-n1: #94bf6d;
+  --c-main-meadow-p1: #517a38;
+  --c-main-meadow-p2: #38602e;
+  --c-main-meadow-0: #598233;
+  --c-main-moss-n1: #c1d04c;
+  --c-main-moss-p1: #7d913a;
+  --c-main-moss-p2: #5b7132;
+  --c-main-moss-0: #adbd38;
+  --c-main-petal-n1: #f58767;
+  --c-main-petal-n2: #f8a28a;
+  --c-main-petal-p1: #c96145;
+  --c-main-petal-p2: #a14227;
+  --c-main-petal-0: #F58666;
+  --c-main-stem-n1: #7fbd9f;
+  --c-main-stem-n2: #9fd5bb;
+  --c-main-stem-p1: #256249;
+  --c-main-stem-p2: #264D52;
+  --c-main-stem-0: #529074;
+  --c-main-thunder-cloud-n1: #707485;
+  --c-main-thunder-cloud-n2: #b6bbcd;
+  --c-main-thunder-cloud-p1: #303543;
+  --c-main-thunder-cloud-p2: #2C2F3C;
+  --c-main-thunder-cloud-0: #4f5261;
+  --c-main-waterfall-n1: #69829e;
+  --c-main-waterfall-n2: #95b1cf;
+  --c-main-waterfall-p1: #324f69;
+  --c-main-waterfall-p2: #17242f;
+  --c-main-waterfall-0: #5f7a96;
+
+  --c-text-dark: #dedede;
+  --c-text-light: var(c-main-waterfall-p2);
+
+  --c-background-contrast-dark: var(--c-main-petal-n1);
+  --c-background-contrast-light: var(--c-main-petal-n1);
+  --c-background-contrast-text-dark: var(--c-text-dark);
+  --c-background-contrast-text-light: var(--c-text-dark);
+  --c-background-primary-dark: var(--c-main-stem-p2);
+  --c-background-primary-light: #fff;
+  --c-background-primary-text-dark: var(--c-text-dark);
+  --c-background-primary-text-light: var(--c-text-light);
+  --c-background-secondary-dark: var(--c-main-waterfall-p2);
+  --c-background-secondary-light: var(--c-main-stem-p2);
+  --c-background-secondary-text-dark: var(--c-text-light);
+  --c-background-secondary-text-light: var(--c-text-dark);
+}

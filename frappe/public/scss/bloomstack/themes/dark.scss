@@ -1,0 +1,8 @@
+@import "../variables.scss";
+
+:host {
+  --c-background-primary: var(--c-background-primary-dark);
+  --c-background-primary-text: var(--c-background-primary-text-dark);
+  --c-background-secondary: var(--c-background-secondary-dark);
+  --c-background-secondary-text: var(--c-background-secondary-text-dark);
+}

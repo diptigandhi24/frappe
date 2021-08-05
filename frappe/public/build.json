@@ -70,6 +70,12 @@
 		"public/js/frappe/form/multi_select_dialog.js",
 		"public/js/frappe/ui/dialog.js"
 	],
+	"css/theme-dark.min.css": [
+		"public/scss/bloomstack/themes/dark.scss"
+	],
+	"css/theme-light.min.css": [
+		"public/scss/bloomstack/themes/light.scss"
+	],
 	"css/desk.min.css": [
 		"public/js/lib/leaflet/leaflet.css",
 		"public/js/lib/leaflet/leaflet.draw.css",

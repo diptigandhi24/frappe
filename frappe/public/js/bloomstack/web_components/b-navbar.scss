@@ -1,6 +1,5 @@
 :host {
   --c-brand: #F96E46;
-  --c-background: #004960;
 }
 
 .navigation {
@@ -14,5 +13,6 @@
   padding: 0;
 
   /* Defaults */
-  background-color: var(--c-background);
+  background-color: var(--c-background-primary);
+  color: var(--c-background-primary-text);
 }

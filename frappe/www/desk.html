@@ -34,11 +34,11 @@
 		<b-navbar id="main-nav"
 			direction="column"
 			size="64px"
+			theme="dark"
 			[xs]direction="row"
 			[md]direction="column"
 			[xs]size="32px"
 			[md]size="64px"
-			theme="overlay"
 		>
 			<b-navlogo label="Home"></b-navlogo>
 			<b-navlogo></b-navlogo>
@@ -53,19 +53,19 @@
 			<b-navbar id="top-nav"
 				direction="row"
 				size="48px"
-				theme="clean"
+				theme="light"
 			>
 				<b-breadcrumb></b-breadcrumb>
 				<b-spacer></b-spacer>
-				<b-awesomebar [xs]visible="0" [md]visible="1"></b-awesomebar>
+				<b-awesome-bar></b-awesome-bar>
 				<b-spacer></b-spacer>
 			</b-navbar>
 		</header>
 		<div id="body_div"></div>
-		<b-navbar id="coms-nav" direction="column"  size="32px" theme="clean" [xs]visible="0" [md]visible="1">
-			<b-menu-item icon="bell"></b-menu-item>
-			<b-menu-item icon="chat"></b-menu-item>
-			<b-menu-item icon="timeline"></b-menu-item>
+		<b-navbar id="coms-nav" theme="light" direction="column"  size="24px" theme="clean" [xs]visible="0" [md]visible="1">
+			<b-icon icon="bell" size="24px"></b-icon>
+			<b-icon icon="comment-discussion" size="24px"></b-icon>
+			<b-icon icon="git-branch" size="24px"></b-icon>
 		</b-navbar>
 		<footer></footer>
 	</div>

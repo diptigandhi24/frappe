@@ -215,7 +215,7 @@ export default {
 <style lang="less" scoped>
 .modules-page-container {
 	position: relative;
-	margin-top: 40px;
+	margin-top: 0;
 	margin-bottom: 30px;
 	padding-top: 1px;
 }

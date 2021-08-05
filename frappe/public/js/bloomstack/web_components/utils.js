@@ -7,7 +7,7 @@ bloomstack.breakpoints = [
   {name: "xxl", size: 1400}
 ];
 
-export const to_str = (v) => `${v}`;
+export const to_str = (v) => v?`${v}`:undefined;
 export const parse_json = (data) => {
   try {
     return JSON.parse(data);
@@ -16,6 +16,16 @@ export const parse_json = (data) => {
     return undefined;
   }
 }
+export const to_bool = (v) => {
+  const v_str = `${v}`.toLowerCase().trim();
+  if ( v_str === "true" ) {
+    return true;
+  } else if ( v_str === "false" ) {
+    return true;
+  }
+  return !!v_str;
+}
+
 export const list_breakpoints = () => {
   return bloomstack.breakpoints;
 }

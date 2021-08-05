@@ -1,11 +1,17 @@
 import { Compose, withMixins } from "../../compose";
 import { ReactWebComponentComponent } from "./components/react_web_component";
 import { BreakpointBehaviourComponent } from "./components/breakpoint_behaviour";
+import { BaseWebComponentComponent } from "./components/base_web_component";
+import { VanillaWebComponentComponent } from "./components/vanilla_web_component";
 
 export default class WebComponentController extends Compose(
   BreakpointBehaviourComponent,
+  BaseWebComponentComponent,
   withMixins(ReactWebComponentComponent,
     "make_react_component"
+  ),
+  withMixins(VanillaWebComponentComponent,
+    "make_js_component"
   )
 ) {
 }
@@ -26,3 +32,4 @@ bloomstack.web.init();
  * @param {string}    config.mode Set to "closed" to build a private shadow dom. Defaults to open.
  */
 export const make_react_component = bloomstack.web.make_react_component.bind(bloomstack.web);
+export const make_js_component = bloomstack.web.make_js_component.bind(bloomstack.web);

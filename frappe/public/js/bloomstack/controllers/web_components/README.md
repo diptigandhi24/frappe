@@ -82,7 +82,7 @@ We support the following screen breakpoints following along bootstrap values. Br
 | xl | >= 1200px |
 | xxl | >= 1400px |
 
-To trigger different values depending on breakpoints simply prefix your attributes with brackets:
+To trigger different values depending on breakpoints simply prefix your attributes with brackets and the breakpoint:
 
 ```html
 <my-component [xs]var1="shown between xs and md" [lg]var1="shown from lg and up"></my-component>

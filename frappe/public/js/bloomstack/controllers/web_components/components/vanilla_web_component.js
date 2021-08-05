@@ -2,19 +2,20 @@ import { Component } from "../../../component";
 import { list_breakpoints, find_element_breakpoint } from "../../../web_components/utils";
 import { ComponentDependencies } from "../../../compose";
 import { BaseWebComponentComponent } from "./base_web_component";
+import { call_if_exists } from "../../../utils";
 
-export class ReactWebComponentComponent extends ComponentDependencies(BaseWebComponentComponent) {
-  on_react_render(element, config, props, mountpoint) {
-    const Renderer = config.component;
-    ReactDOM.render(<Renderer {...props} />, mountpoint);
+export class VanillaWebComponentComponent extends ComponentDependencies(BaseWebComponentComponent) {
+  on_vanilla_render(element, config, props, mountpoint) {
+    call_if_exists(config.component, props, mountpoint);
     return true;
   }
 
-  on_react_mount(element, config, props, mountpoint) {
+  on_vanilla_mount(element, config, props, mountpoint) {
+    call_if_exists(config.mount, props, mountpoint);
   }
 
-  on_react_unmount(element, config, mountpoint) {
-    ReactDOM.unmountComponentAtNode(mountpoint);
+  on_vanilla_unmount(element, config, mountpoint) {
+    call_if_exists(config.unmount, mountpoint);
     return true;
   }
 
@@ -28,11 +29,15 @@ export class ReactWebComponentComponent extends ComponentDependencies(BaseWebCom
    * @param {function}  config.component A component implementation function to render
    * @param {string}    config.mode Set to "closed" to build a private shadow dom. Defaults to open.
    */
-  async make_react_component(config) {
+  async make_js_component(config) {
+    const _broadcast = this.broadcast.bind(this);
+    const _shadowStore = this.shadowStore;
+    const _propStore = this.propStore;
+    const _initializedStore = this.initializedStore;
     const _observedAttributes = [
       ...Object.keys(config.props || {})
     ];
-    config.type = "react";
+    config.type = "vanilla";
     await this.broadcast("build_observed_attributes", config, _observedAttributes);
     await this.broadcast("build_web_component", config, _observedAttributes)
   }
