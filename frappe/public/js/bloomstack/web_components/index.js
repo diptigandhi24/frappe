@@ -6,3 +6,5 @@ import "./b-awesome-bar";
 import "./b-autocomplete";
 import "./b-spacer";
 import "./b-icon";
+import "./b-field";
+import "./b-input";

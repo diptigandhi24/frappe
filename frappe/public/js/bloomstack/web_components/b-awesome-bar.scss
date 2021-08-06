@@ -1,4 +1,11 @@
-.field {
-  display: flex;
-  flex-direction: row;
+:host {
+  outline: none;
+}
+
+:host(:focus-within) {
+  outline: none;
+}
+
+:focus {
+  outline: none;
 }

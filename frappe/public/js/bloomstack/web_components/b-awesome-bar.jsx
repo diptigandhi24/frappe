@@ -12,13 +12,12 @@ make_react_component({
       setInput(e.current.value);
     }, [setInput])
 
-    return <div class="awesome-bar">
-      <div class="field">
-        <b-icon icon="search" size="12px"></b-icon>
-        <input ref={ref} type="text" onChange={onChange}></input>
-        <b-icon icon="multi-select" size="12px"></b-icon>
-      </div>
-      <b-autocomplete target={ref && ref.current}></b-autocomplete>
-    </div>
+    console.log("INPUT: ", input);
+
+    return <b-input ref={ref} onChange={onChange} width="large">
+        <b-icon slot="left" icon="search" size="16px" padding="0"></b-icon>
+        <b-icon slot="right" icon="ellipsis" size="16px" padding="0"></b-icon>
+        <b-autocomplete target={ref && ref.current}></b-autocomplete>
+      </b-input>
   }
 })

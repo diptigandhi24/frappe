@@ -16,6 +16,7 @@ export const parse_json = (data) => {
     return undefined;
   }
 }
+export const to_number = (v) => parseFloat(v);
 export const to_bool = (v) => {
   const v_str = `${v}`.toLowerCase().trim();
   if ( v_str === "true" ) {

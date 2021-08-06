@@ -56,7 +56,7 @@ export class BaseWebComponentComponent extends Component {
     customElements.define(config.tag, class extends HTMLElement {
       constructor() {
         super();
-        const shadow = this.attachShadow({ mode: config.mode || 'open' });
+        const shadow = this.attachShadow({ mode: config.mode || 'open', delegatesFocus: true });
         _shadowStore.set(this, shadow);
       }
   

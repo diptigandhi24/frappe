@@ -6,8 +6,6 @@ make_react_component({
     
   },
   component: () => {
-    return <div>
-      Auto complete here
-    </div>
+    return <div></div>
   }
 })
