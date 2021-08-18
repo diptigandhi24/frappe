@@ -290,6 +290,9 @@ def get_group_by_chart_config(chart, filters, or_filters):
 	group_by_field = chart.group_by_based_on
 	doctype = chart.document_type
 
+	# don't include documents where Group By Based On has Null values 
+	filters.append([doctype, group_by_field, "!=", ""])
+	
 	data = frappe.db.get_list(
 		doctype,
 		fields = [
@@ -305,11 +308,14 @@ def get_group_by_chart_config(chart, filters, or_filters):
 
 	if data:
 		if chart.number_of_groups and chart.number_of_groups < len(data):
-			other_count = 0
-			for i in range(chart.number_of_groups - 1, len(data)):
-				other_count += data[i]['count']
-			data = data[0: chart.number_of_groups - 1]
-			data.append({'name': 'Other', 'count': other_count})
+			if chart.number_of_groups > 0 and chart.show_others:
+				other_count = 0
+				for i in range(chart.number_of_groups - 1, len(data)):
+					other_count += data[i]['count']
+				data = data[0: chart.number_of_groups - 1]
+				data.append({'name': 'Other', 'count': other_count})
+			else:
+				data = data[0: chart.number_of_groups]
 
 		chart_config = {
 			"labels": [item['name'] if item['name'] else 'Not Specified' for item in data],
