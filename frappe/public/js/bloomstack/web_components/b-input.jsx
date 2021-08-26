@@ -24,8 +24,6 @@ make_react_component({
     width: to_str
   },
   component: (props) => {
-    console.log("--- INPUT TAG:");
-    console.log(props);
     if ( isNaN(props["max-length"]) ) {
       delete props["max-length"];
     }

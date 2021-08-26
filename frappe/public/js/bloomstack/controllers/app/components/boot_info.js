@@ -1,7 +1,8 @@
 import { Component } from "../../../compose";
+import { EVT_INIT } from "../../../events";
 
 export class BootInfoComponent extends Component {
-  async on_init() {
+  async [EVT_INIT]() {
     if(frappe.boot.status==='failed') {
       frappe.msgprint({
         message: frappe.boot.error,

@@ -18,7 +18,7 @@ make_react_component({
     visible: to_bool
   },
   component: (props) => {
-    const {direction, children, size, theme, visible, element} = props;
+    const {direction, children, size, theme, visible} = props;
     const [appLogoUrl, setAppLogoUrl] = useState("");
     const style = {
       flexDirection: direction
@@ -34,6 +34,15 @@ make_react_component({
         width: "100%",
         height: size
       })
+    }
+
+    if ( visible != undefined ) {
+      if ( !(!!visible) ) {
+        props.$web_component.style.display = "none";
+        return [];
+      } else {
+        props.$web_component.style.display = "flex";
+      }
     }
   
     return <div className={clsx("navigation")} style={style}>

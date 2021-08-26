@@ -32,13 +32,11 @@
 	</div>
 	<div class="main-section">
 		<b-navbar id="main-nav"
+			theme="dark"
 			direction="column"
 			size="64px"
-			theme="dark"
-			[xs]direction="row"
-			[md]direction="column"
-			[xs]size="32px"
-			[md]size="64px"
+			[xs]visible="false"
+			[md]visible="true"
 		>
 			<b-navlogo label="Home"></b-navlogo>
 			<b-navlogo></b-navlogo>
@@ -53,6 +51,8 @@
 			<b-navbar id="top-nav"
 				direction="row"
 				size="32px"
+				[xm]visible="false"
+				[md]visible="true"
 				theme="light"
 			>
 				<b-breadcrumb></b-breadcrumb>
@@ -62,7 +62,15 @@
 			</b-navbar>
 		</header>
 		<div id="body_div"></div>
-		<b-navbar id="coms-nav" theme="light" direction="column"  size="24px" theme="clean" [xs]visible="0" [md]visible="1">
+		<b-navbar 
+			id="coms-nav"
+			theme="light"
+			direction="column"
+			size="24px"
+			theme="clean"
+			[xs]visible="false"
+			[md]visible="true"
+		>
 			<b-icon icon="bell" size="24px"></b-icon>
 			<b-icon icon="comment-discussion" size="24px"></b-icon>
 			<b-icon icon="git-branch" size="24px"></b-icon>

@@ -4,17 +4,14 @@ import { ComponentDependencies } from "../../../compose";
 import { BaseWebComponentComponent } from "./base_web_component";
 
 export class ReactWebComponentComponent extends ComponentDependencies(BaseWebComponentComponent) {
-  on_react_render(element, config, props, mountpoint) {
-    const Renderer = config.component;
-    ReactDOM.render(<Renderer {...props} />, mountpoint);
+  on_react_render(component, props) {
+    const Renderer = component.config.component;
+    ReactDOM.render(<Renderer {...props} />, component.mountpoint);
     return true;
   }
 
-  on_react_mount(element, config, props, mountpoint) {
-  }
-
-  on_react_unmount(element, config, mountpoint) {
-    ReactDOM.unmountComponentAtNode(mountpoint);
+  on_react_unmount(component) {
+    ReactDOM.unmountComponentAtNode(component.mountpoint);
     return true;
   }
 
@@ -29,11 +26,11 @@ export class ReactWebComponentComponent extends ComponentDependencies(BaseWebCom
    * @param {string}    config.mode Set to "closed" to build a private shadow dom. Defaults to open.
    */
   async make_react_component(config) {
-    const _observedAttributes = [
+    const observedAttributes = [
       ...Object.keys(config.props || {})
     ];
     config.type = "react";
-    await this.broadcast("build_observed_attributes", config, _observedAttributes);
-    await this.broadcast("build_web_component", config, _observedAttributes)
+    await this.broadcast("build_observed_attributes", config, observedAttributes);
+    await this.broadcast("build_web_component", config, observedAttributes)
   }
 }

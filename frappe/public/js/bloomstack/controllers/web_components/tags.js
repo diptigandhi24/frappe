@@ -1,0 +1,1 @@
+export const TAG_WEB_COMPONENT = Symbol("tag_web_component");

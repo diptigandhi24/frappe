@@ -12,12 +12,10 @@ make_react_component({
       setInput(e.current.value);
     }, [setInput])
 
-    console.log("INPUT: ", input);
-
     return <b-input ref={ref} onChange={onChange} width="large">
-        <b-icon slot="left" icon="search" size="16px" padding="0"></b-icon>
-        <b-icon slot="right" icon="ellipsis" size="16px" padding="0"></b-icon>
-        <b-autocomplete target={ref && ref.current}></b-autocomplete>
-      </b-input>
+      <b-icon slot="left" icon="search" size="16px" padding="0"></b-icon>
+      <b-icon slot="right" icon="ellipsis" size="16px" padding="0"></b-icon>
+      <b-autocomplete target={ref && ref.current}></b-autocomplete>
+    </b-input>
   }
 })

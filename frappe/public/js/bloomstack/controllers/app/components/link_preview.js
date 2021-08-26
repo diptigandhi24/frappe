@@ -1,16 +1,17 @@
 import { ComponentDependencies } from "../../../compose";
 import { BootInfoComponent } from "./boot_info";
+import { EVT_INIT } from "../../../events";
 
 /**
  * Indentifies link fields on the page as they are added and adds preview functionality.
  */
 export class LinkPreviewComponent extends ComponentDependencies(BootInfoComponent) {
-  on_init() {
+	[EVT_INIT]() {
 		this.popovers_list = [];
 		this.LINK_CLASSES = 'a[data-doctype], input[data-fieldtype="Link"], .popover';
 		this.popover_timeout = null;
 		this.setup_events();
-  }
+	}
 
 	setup_events() {
 		$(document.body).on('mouseover', this.LINK_CLASSES, (e) => {
@@ -202,7 +203,7 @@ export class LinkPreviewComponent extends ComponentDependencies(BootInfoComponen
 		});
 		content_html = `<div class="preview-table">${content_html}</div>`;
 
-		let popover_content =`
+		let popover_content = `
 			<div class="preview-popover-header">${image_html}
 				<div class="preview-header">
 					<div class="preview-main">

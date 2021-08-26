@@ -2,11 +2,11 @@ import { ComponentDependencies } from "../../../compose";
 import { BootInfoComponent } from "./boot_info";
 
 export class ShowNotesComponents extends ComponentDependencies(BootInfoComponent) {
-  on_show_notes() {
-		if(frappe.boot.notes.length) {
-      for(const note of frappe.boot.notes) {
-				if(!note.seen || note.notify_on_every_login) {
-					var d = frappe.msgprint({message:note.content, title:note.title});
+	on_show_notes() {
+		if (frappe.boot.notes.length) {
+			for (const note of frappe.boot.notes) {
+				if (!note.seen || note.notify_on_every_login) {
+					var d = frappe.msgprint({ message: note.content, title: note.title });
 					d.keep_open = true;
 					d.custom_onhide = () => {
 						note.seen = true;
@@ -22,11 +22,11 @@ export class ShowNotesComponents extends ComponentDependencies(BootInfoComponent
 						}
 
 						// next note
-            this.broadcast("show_notes");
+						this.broadcast("show_notes");
 					};
-        }
-        break;
+				}
+				break;
 			};
 		}
-  }
+	}
 }

@@ -1,11 +1,13 @@
 import { Compose, withMixins } from "../../compose";
 import { ReactWebComponentComponent } from "./components/react_web_component";
-import { BreakpointBehaviourComponent } from "./components/breakpoint_behaviour";
+import { BreakpointBootstrappingComponent } from "./components/breakpoint_bootstrapping";
 import { BaseWebComponentComponent } from "./components/base_web_component";
 import { VanillaWebComponentComponent } from "./components/vanilla_web_component";
+import { ParentComponent } from "../../components/parent";
 
 export default class WebComponentController extends Compose(
-  BreakpointBehaviourComponent,
+  ParentComponent,
+  BreakpointBootstrappingComponent,
   BaseWebComponentComponent,
   withMixins(ReactWebComponentComponent,
     "make_react_component"
@@ -17,7 +19,7 @@ export default class WebComponentController extends Compose(
 }
 
 bloomstack.web = new WebComponentController();
-bloomstack.web.init();
+bloomstack.web_ready = bloomstack.web.init();
 
 // Expose simple apis to keep wrists healthy ///////////////////////////
 
@@ -30,6 +32,13 @@ bloomstack.web.init();
  * @param {object}    config.props An object containing component props and a function to sanitize and convert its values.
  * @param {function}  config.component A component implementation function to render
  * @param {string}    config.mode Set to "closed" to build a private shadow dom. Defaults to open.
+ * @param {number}    config.render_debounce_timeout Sets a rendering debounce timeout. Defaults to 50 milliseconds.
  */
-export const make_react_component = bloomstack.web.make_react_component.bind(bloomstack.web);
-export const make_js_component = bloomstack.web.make_js_component.bind(bloomstack.web);
+export const make_react_component = async (...args) => {
+  await bloomstack.web_ready;
+  return bloomstack.web.make_react_component(...args);
+}
+export const make_js_component = async (...args) => {
+  await bloomstack.web_ready;
+  return bloomstack.web.make_js_component(...args);
+}

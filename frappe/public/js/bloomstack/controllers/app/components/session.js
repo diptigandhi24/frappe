@@ -8,31 +8,34 @@ export class SessionComponent extends Component {
 	async logout() {
 		frappe.app.logged_out = true;
 		const r = frappe.call({
-      method:'logout'});
-    if(r.exc) {
-      return;
-    }
-    this.redirect_to_login();
-  }
+			method: 'logout'
+		});
+		if (r.exc) {
+			return;
+		}
+		this.redirect_to_login();
+	}
 
   /**
    * Reroutes user to login page
    */
-  redirect_to_login() {
+	redirect_to_login() {
 		window.location.href = '/';
-  }
-	
+	}
+
   /**
    * trigger session expiration behaviour
    */
 	handle_session_expired() {
-		if(!frappe.app.session_expired_dialog) {
+		if (!frappe.app.session_expired_dialog) {
 			const dialog = new frappe.ui.Dialog({
 				title: __('Session Expired'),
 				keep_open: true,
 				fields: [
-					{ fieldtype:'Password', fieldname:'password',
-						label: __('Please Enter Your Password to Continue') },
+					{
+						fieldtype: 'Password', fieldname: 'password',
+						label: __('Please Enter Your Password to Continue')
+					},
 				],
 				onhide: () => {
 					if (!dialog.logged_in) {
@@ -49,7 +52,7 @@ export class SessionComponent extends Component {
 						pwd: dialog.get_values().password
 					},
 					callback: (r) => {
-						if (r.message==='Logged In') {
+						if (r.message === 'Logged In') {
 							dialog.logged_in = true;
 
 							// revert backdrop
@@ -67,7 +70,7 @@ export class SessionComponent extends Component {
 			});
 			frappe.app.session_expired_dialog = dialog;
 		}
-		if(!frappe.app.session_expired_dialog.display) {
+		if (!frappe.app.session_expired_dialog.display) {
 			frappe.app.session_expired_dialog.show();
 			// add backdrop
 			$('.modal-backdrop').css({
@@ -75,5 +78,5 @@ export class SessionComponent extends Component {
 				'background-color': '#4B4C9D'
 			});
 		}
-  }
+	}
 }

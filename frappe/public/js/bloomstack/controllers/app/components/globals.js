@@ -21,37 +21,37 @@ export class GlobalsComponent extends ComponentDependencies(BootInfoComponent, M
     // Proxy for user globals
     Object.defineProperties(window, {
       'user': {
-        get: function() {
+        get: function () {
           console.warn('Please use `frappe.session.user` instead of `user`. It will be deprecated soon.');
           return frappe.session.user;
         }
       },
       'user_fullname': {
-        get: function() {
+        get: function () {
           console.warn('Please use `frappe.session.user_fullname` instead of `user_fullname`. It will be deprecated soon.');
           return frappe.session.user;
         }
       },
       'user_email': {
-        get: function() {
+        get: function () {
           console.warn('Please use `frappe.session.user_email` instead of `user_email`. It will be deprecated soon.');
           return frappe.session.user_email;
         }
       },
       'user_defaults': {
-        get: function() {
+        get: function () {
           console.warn('Please use `frappe.user_defaults` instead of `user_defaults`. It will be deprecated soon.');
           return frappe.user_defaults;
         }
       },
       'roles': {
-        get: function() {
+        get: function () {
           console.warn('Please use `frappe.user_roles` instead of `roles`. It will be deprecated soon.');
           return frappe.user_roles;
         }
       },
       'sys_defaults': {
-        get: function() {
+        get: function () {
           console.warn('Please use `frappe.sys_defaults` instead of `sys_defaults`. It will be deprecated soon.');
           return frappe.user_roles;
         }

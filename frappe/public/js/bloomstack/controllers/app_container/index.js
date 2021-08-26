@@ -2,6 +2,7 @@ import { Compose, withMixins } from "../../compose"
 import { SideBarInfoComponent } from "./components/sidebar_info";
 import { PageManagerComponent } from "./components/page_manager";
 import { BreadcrumbsComponent } from "../common/components/breadcrumbs";
+import { EVT_CONSTRUCT } from "../../events";
 
 frappe.provide('frappe.pages');
 frappe.provide('frappe.views');
@@ -10,7 +11,7 @@ export class Container extends Compose(
 	withMixins(SideBarInfoComponent, "has_sidebar"),
 	withMixins(PageManagerComponent, "add_page", "change_to")
 ) {
-	on_construct() {
+	[EVT_CONSTRUCT]() {
 		this._intro = "Container contains pages inside `#container` and manages \
 		page creation, switching";
 

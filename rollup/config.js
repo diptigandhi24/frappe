@@ -74,7 +74,8 @@ function get_rollup_options_for_js(output_file, input_files) {
 			transforms: {
 				dangerousForOf: true,
 				classes: false,
-				asyncAwait: false
+				asyncAwait: false,
+				generator: false
 			},
 			exclude: [path.resolve(bench_path, '**/*.css'), path.resolve(bench_path, '**/*.less')]
 		}),

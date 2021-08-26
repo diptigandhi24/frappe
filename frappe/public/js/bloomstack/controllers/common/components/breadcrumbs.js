@@ -1,34 +1,35 @@
 import { Component } from "../../../component";
+import { EVT_CONSTRUCT, EVT_INIT } from "../../../events";
 
 export class BreadcrumbsComponent extends Component {
-  on_construct() {
-    this.all = {};
+	[EVT_CONSTRUCT]() {
+		this.all = {};
 
-    this.preferred = {
-      "File": "",
-      "Dashboard": "Customization",
-      "Dashboard Chart": "Customization",
-      "Dashboard Chart Source": "Customization",
-    };
-
-    this.module_map = {
-      'Core': 'Settings',
-      'Email': 'Settings',
-      'Custom': 'Settings',
-      'Workflow': 'Settings',
-      'Printing': 'Settings',
-      'Automation': 'Settings',
-      'Setup': 'Settings',
+		this.preferred = {
+			"File": "",
+			"Dashboard": "Customization",
+			"Dashboard Chart": "Customization",
+			"Dashboard Chart Source": "Customization",
 		};
 
-		if ( !frappe.breadcrumbs ) {
+		this.module_map = {
+			'Core': 'Settings',
+			'Email': 'Settings',
+			'Custom': 'Settings',
+			'Workflow': 'Settings',
+			'Printing': 'Settings',
+			'Automation': 'Settings',
+			'Setup': 'Settings',
+		};
+
+		if (!frappe.breadcrumbs) {
 			// Map existing api
 			frappe.breadcrumbs = this;
 		}
 	}
-	
-	on_init() {
-		$(document).bind('rename', function(event, dt, old_name, new_name) {
+
+	[EVT_INIT]() {
+		$(document).bind('rename', function (event, dt, old_name, new_name) {
 			this.rename(dt, old_name, new_name);
 		});
 	}
@@ -62,9 +63,9 @@ export class BreadcrumbsComponent extends Component {
 			obj = module;
 		} else {
 			obj = {
-				module:module,
-				doctype:doctype,
-				type:type
+				module: module,
+				doctype: doctype,
+				type: type
 			}
 		}
 
@@ -86,7 +87,7 @@ export class BreadcrumbsComponent extends Component {
 	update() {
 		var breadcrumbs = this.all[this.current_page()];
 
-		if(!frappe.visible_modules) {
+		if (!frappe.visible_modules) {
 			frappe.visible_modules = $.map(frappe.boot.allowed_modules, (m) => {
 				return m.module_name;
 			});
@@ -94,7 +95,7 @@ export class BreadcrumbsComponent extends Component {
 
 		var $breadcrumbs = $("#navbar-breadcrumbs").empty();
 
-		if(!breadcrumbs) {
+		if (!breadcrumbs) {
 			$("body").addClass("no-breadcrumbs");
 			return;
 		}
@@ -109,46 +110,46 @@ export class BreadcrumbsComponent extends Component {
 		// get preferred module for breadcrumbs, based on sent via module
 		var from_module = this.get_doctype_module(breadcrumbs.doctype);
 
-		if(from_module) {
+		if (from_module) {
 			breadcrumbs.module = from_module;
-		} else if(this.preferred[breadcrumbs.doctype]!==undefined) {
+		} else if (this.preferred[breadcrumbs.doctype] !== undefined) {
 			// get preferred module for breadcrumbs
 			breadcrumbs.module = this.preferred[breadcrumbs.doctype];
 		}
 
-		if(breadcrumbs.module) {
+		if (breadcrumbs.module) {
 			if (this.module_map[breadcrumbs.module]) {
 				breadcrumbs.module = this.module_map[breadcrumbs.module];
 			}
 
-			if(frappe.get_module(breadcrumbs.module)) {
+			if (frappe.get_module(breadcrumbs.module)) {
 				// if module access exists
 				var module_info = frappe.get_module(breadcrumbs.module),
 					icon = module_info && module_info.icon,
 					label = module_info ? module_info.label : breadcrumbs.module;
 
 
-				if(module_info && !module_info.blocked && frappe.visible_modules.includes(module_info.module_name)) {
+				if (module_info && !module_info.blocked && frappe.visible_modules.includes(module_info.module_name)) {
 					$(repl('<li><a href="#modules/%(module)s">%(label)s</a></li>',
 						{ module: breadcrumbs.module, label: __(label) }))
 						.appendTo($breadcrumbs);
 				}
 			}
 		}
-		if(breadcrumbs.doctype && frappe.get_route()[0]==="Form") {
-			if(breadcrumbs.doctype==="User"
+		if (breadcrumbs.doctype && frappe.get_route()[0] === "Form") {
+			if (breadcrumbs.doctype === "User"
 				|| frappe.get_doc('DocType', breadcrumbs.doctype).issingle) {
 				// no user listview for non-system managers and single doctypes
 			} else {
 				var route;
-				if(frappe.boot.treeviews.indexOf(breadcrumbs.doctype) !== -1) {
+				if (frappe.boot.treeviews.indexOf(breadcrumbs.doctype) !== -1) {
 					var view = frappe.model.user_settings[breadcrumbs.doctype].last_view || 'Tree';
 					route = view + '/' + breadcrumbs.doctype;
 				} else {
 					route = 'List/' + breadcrumbs.doctype;
 				}
 				$(repl('<li><a href="#%(route)s">%(label)s</a></li>',
-					{route: route, label: __(breadcrumbs.doctype)}))
+					{ route: route, label: __(breadcrumbs.doctype) }))
 					.appendTo($breadcrumbs);
 			}
 		}

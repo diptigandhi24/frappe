@@ -1,10 +1,11 @@
 import { Component } from "../../../component";
+import { EVT_INIT } from "../../../events";
 
 /**
  * Initializes socket io support
  */
 export class SocketIOComponent extends Component {
-  on_init() {
+  [EVT_INIT]() {
     frappe.socketio.init();
   }
 }

@@ -1,6 +1,6 @@
 import { make_react_component } from "../controllers/web_components";
 
-const WIDTH_SIZES = {small: '4rem', medium: '8rem', large: '16rem'};
+const WIDTH_SIZES = { small: '4rem', medium: '8rem', large: '16rem' };
 
 make_react_component({
   tag: "b-field",
@@ -36,12 +36,12 @@ make_react_component({
     flex: 0 0 auto;
   }
   `,
-  component: ({width}) => {
+  component: ({ width }) => {
     const style = {};
-    if ( width && width.strip() in Object.keys(WIDTH_SIZES)) {
+    if (width && width.strip() in Object.keys(WIDTH_SIZES)) {
       width = Reflect.get(WIDTH_SIZES, width);
     }
-    if ( width ) {
+    if (width) {
       style.width = width;
     }
     return <div class="field" style={style}>

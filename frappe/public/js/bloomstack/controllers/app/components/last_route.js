@@ -6,7 +6,7 @@ import { BootInfoComponent } from "./boot_info";
  */
 export class LastRouteComponent extends ComponentDependencies(BootInfoComponent) {
   on_boot() {
-    if(localStorage.getItem("session_last_route")) {
+    if (localStorage.getItem("session_last_route")) {
       window.location.hash = localStorage.getItem("session_last_route");
       localStorage.removeItem("session_last_route");
     }

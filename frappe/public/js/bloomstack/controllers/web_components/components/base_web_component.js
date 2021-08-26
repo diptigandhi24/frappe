@@ -1,169 +1,180 @@
 import { Component } from "../../../component";
+import { Compose, ComponentDependencies, withMixins } from "../../../compose";
 import { list_breakpoints, find_element_breakpoint } from "../../../web_components/utils";
+import { WebComponentInfo } from "../../web_component_info";
+import { ParentComponent } from "../../../components/parent";
+import { TAG_MOUNTED } from "../../../tags";
+import { EVT_MOUNT, EVT_INIT_ELEMENT, EVT_UNMOUNT, EVT_RENDER, EVT_UPDATE, EVT_SET_ATTRIBUTE } from "../events";
+import { EVT_CONSTRUCT, EVT_INIT, EVT_AFTER_INIT, EVT_INITIALIZED } from "../../../events";
+import { ChildComponent } from "../../../components/child";
+import { TAG_WEB_COMPONENT } from "../tags";
+import { TaggedComponent } from "../../../components/tagged";
+import { with_debounce } from "../../../utils";
 
-export class BaseWebComponentComponent extends Component {
-  on_construct() {
-    this.shadowStore = new WeakMap();     // used to store shadoe dom per instance
-    this.propStore = new WeakMap();       // used to store props per instance
-    this.initializedStore = new WeakMap(); // used to track connected callback
-  }
-
-  on_define_prop(element, key, conv) {
-    const _propStore = this.propStore;
-
-    if ( !_propStore.has(element) ) {
-      _propStore.set(element, new Map());
-    }
-    const targetProps = _propStore.get(element);
- 
-    Reflect.defineProperty(element, key, {
+export class BaseWebComponentComponent extends ComponentDependencies(ParentComponent) {
+  on_define_prop(component, key, conv) {
+    component.define_attribute(key, conv);
+    Reflect.defineProperty(component, key, {
       get() {
-        return Reflect.get(targetProps, key);
+        return component.props.get(key);
       },
-      set(v) {
-        if ( typeof conv === "function" ) {
-          v = conv(v);
-        }
-        const currentValue = Reflect.get(targetProps, key);
-        if ( v != currentValue ) {
-          targetProps.set(key, v);
-          Reflect.apply(Reflect.get(element, "render"), element, []);
-        }
+      async set(v) {
+        component.set_attribute(key, v);
       }
     });
 
     // pickup values already set on element.
-    const currentValue = element.getAttribute(key);
-    const currentTransformedValue = typeof conv === "function"?conv(currentValue):currentValue;
-    targetProps.set(key, currentTransformedValue);
+    const current_value = component.element.getAttribute(key);
+    const current_transformed_value = typeof conv === "function" ? conv(current_value) : current_value;
+    component.props.set(key, current_transformed_value);
   }
 
-  async on_init_element(element, config) {
-    if ( config.props ) {
-      for(const key of Object.keys(config.props)) {
-        await this.broadcast("define_prop", element, key, Reflect.get(config.props, key));
+  async [EVT_INIT_ELEMENT](component) {
+    if (component.config.props) {
+      for (const key of Object.keys(component.config.props)) {
+        await this.broadcast("define_prop", component, key, Reflect.get(component.config.props, key));
       }
     }
   }
 
-  async on_build_web_component(config, observedAttributes) {
+  async on_build_web_component(config, observed_attributes) {
     // cache apis to access inside dynamic element class
+    const _controller = this.parent;
     const _broadcast = this.broadcast.bind(this);
-    const _shadowStore = this.shadowStore;
-    const _propStore = this.propStore;
-    const _initializedStore = this.initializedStore;
-    
+
+    // build attribute breakpoint combinations
+    const breakpoint_attributes = [];
+    for (const attr of observed_attributes) {
+      for (const bp of bloomstack.breakpoints) {
+        breakpoint_attributes.push(`[${bp.name}]${attr}`);
+      }
+    }
+
+    const extended_observed_attributes = [...observed_attributes, ...breakpoint_attributes];
     customElements.define(config.tag, class extends HTMLElement {
       constructor() {
         super();
-        const shadow = this.attachShadow({ mode: config.mode || 'open', delegatesFocus: true });
-        _shadowStore.set(this, shadow);
+        this.__web_component = new WebComponentInfo(
+          this,
+          this.attachShadow({
+            mode: config.mode || 'open',
+            delegatesFocus: true
+          }),
+          config
+        );
+
+        this.render = with_debounce(this.render, this, config.render_debounce_timeout || 50);
       }
-  
+
       /**
        * @returns {string[]}
        */
       static get observedAttributes() {
-        return observedAttributes;
+        return extended_observed_attributes;
       }
 
-      get isReady() {
-        const initialized = _initializedStore.get(this) || false;
-        // Avoid rendering when we are not connected to the dom
-        if ( !this.isConnected || !initialized ) {
-          return false;
-        }
-
-        return true;
-       }
-  
+      /**
+       * Element attributes callback. Will only trigger for attributes listed in observerAttributes()
+       * @param {string} name Attribute name
+       * @param {*} oldValue Old attribute value
+       * @param {*} newValue New attribute value
+       */
       attributeChangedCallback(name, oldValue, newValue) {
-        if ( this.isReady &&  oldValue != newValue ) {
-          Reflect.set(this, name, newValue);
+        if (this.isConnected && oldValue != newValue) {
+          if (this.__web_component[EVT_INITIALIZED]) {
+            this.__web_component.set_attribute(name, newValue);
+          }
         }
       }
 
-      async update() {
-        if ( !this.isReady ) {
+      async update(render) {
+        if (!this.isConnected) {
           return;
         }
-  
-        const targetProps = _propStore.get(this);
-        await _broadcast("update", this, config, targetProps);
+
+        await _broadcast(EVT_UPDATE, this.__web_component);
+        if (render === undefined || !!render) {
+          await this.render();
+        }
       }
-  
+
       async render() {
-        const targetProps = _propStore.get(this);
-        const shadow = _shadowStore.get(this);
-        const mountpoint = shadow.getElementById("__mountpoint");
-        if ( !this.isReady ) {
+        if (!this.isConnected || this.__web_component.can_render) {
           return;
         }
- 
-        await _broadcast("render", this, config, Object.fromEntries(targetProps), mountpoint);
-        await _broadcast(`${config.type}_render`, this, config, Object.fromEntries(targetProps), mountpoint);
+        const props = Object.fromEntries(this.__web_component.props);
+        Reflect.set(props, "$web_component", this);
+
+        await _broadcast(EVT_RENDER, this.__web_component, props);
+        await _broadcast(`${config.type}_render`, this.__web_component, props);
       }
-  
+
       async disconnectedCallback() {
-        if ( !this.isReady ) {
+
+        if (!this.isConnected) {
           return;
         }
-  
-        this.parentResizeObserver.disconnect();
-  
-        const mountpoint = shadow.getElementById("__mountpoint");
-        await _broadcast("unmount", this, config, mountpoint);
-        await _broadcast(`${config.type}_unmount`, this, config, mountpoint);
-  
-        _initializedStore.set(this, false);
+
+        this.__web_component[TaggedComponent].remove_tag(TAG_MOUNTED);
+        _controller.remove_child_component(this.__web_component);
+
+        await _broadcast(EVT_UNMOUNT, this.__web_component,);
+        await _broadcast(`${config.type}_unmount`, this.__web_component);
+
+        this.__web_component.initialized = false;
       }
-      
+
       async connectedCallback() {
-        if ( this.isReady ) {
+        if (!this.isConnected) {
           return;
         }
 
-        if ( !_propStore.has(this) ) {
-          _propStore.set(this, new Map());
-        }
+        await _controller[ParentComponent].add_child_controller(this.__web_component);
+        await this.__web_component.with_update(async () => {
+          await _broadcast(EVT_INIT_ELEMENT, this.__web_component);
 
-        await _broadcast("init_element", this, config);
-
-        const targetProps = _propStore.get(this);
-        const props = Object.fromEntries(targetProps);
-        const stylesheets_list = (typeof config.stylesheets === "function")?config.stylesheets(props):config.stylesheets;
-        const scripts_list = (typeof config.scripts === "function")?config.scripts(props):config.scripts;
-
-        const links = (stylesheets_list || []).map(href => `<link rel="stylesheet" href="${href}" />`).join("\n");
-        const scripts = (scripts_list || []).map(src => `<script type="text/javascript" src="${src}"></script>`).join("\n");
-        const shadow = _shadowStore.get(this);
-        shadow.innerHTML = `
-          <style>
-            :host {
-              display: flex;
+          for (const attr of extended_observed_attributes) {
+            if ( this.hasAttribute(attr) ) {
+              this.__web_component.set_attribute(attr, this.getAttribute(attr));
             }
-            #__mountpoint {
-              flex: 1 1 auto;
-              display: flex;
-              padding: 0;
-              margin: 0;
-            }
-            ${config.style?config.style:''}
-          </style>
-          ${links}
-          <div id="__mountpoint"></div>
-        `
-        for(const att of observedAttributes) {
-          Reflect.set(this, att, this.getAttribute(att));
-        }
-        this.parentResizeObserver = new ResizeObserver(() => this.render()).observe(this.parentNode);
-        _initializedStore.set(this, true);
+          }
+          const props = Object.fromEntries(this.__web_component.props);
+          const stylesheets_list = (typeof this.__web_component.config.stylesheets === "function") ? this.__web_component.config.stylesheets(props) : this.__web_component.config.stylesheets;
+          const scripts_list = (typeof this.__web_component.config.scripts === "function") ? this.__web_component.config.scripts(props) : this.__web_component.config.scripts;
+          const links = (stylesheets_list || []).map(href => `<link rel="stylesheet" href="${href}" />`).join("\n");
+          const scripts = (scripts_list || []).map(src => `<script type="text/javascript" src="${src}"></script>`).join("\n");
+          this.__web_component.shadow.innerHTML = `
+            <style>
+              :host {
+                display: flex;
+              }
+              :host #__mountpoint {
+                flex: 1 1 auto;
+                display: flex;
+                padding: 0;
+                margin: 0;
+              }
+              ${this.__web_component.config.style ? config.style : ''}
+            </style>
+            ${links}
+            <div id="__mountpoint"></div>
+          `;
 
-        const mountpoint = shadow.getElementById("__mountpoint");
-        await this.update();
-        await _broadcast("mount", this, config, Object.fromEntries(targetProps), mountpoint);
-        await _broadcast(`${config.type}_mount`, this, config, Object.fromEntries(targetProps), mountpoint);
-        await this.render();
+          this.__web_component.mountpoint = this.__web_component.shadow.getElementById("__mountpoint");
+          this.__web_component[ChildComponent].bubble_event(EVT_SET_ATTRIBUTE);
+          await this.__web_component[TaggedComponent].add_tag(TAG_WEB_COMPONENT);
+
+          // apply attributes before rendering for the first time.
+          for (const att of extended_observed_attributes) {
+            await this.__web_component.set_attribute(att, this.getAttribute(att));
+          }
+
+          const mountpoint = this.__web_component.mountpoint;
+          await this.update(false);
+          await _broadcast(EVT_MOUNT, this.__web_component, Object.fromEntries(this.__web_component.props));
+          await _broadcast(`${config.type}_mount`, this.__web_component, Object.fromEntries(this.__web_component.props));
+          await this.__web_component[TaggedComponent].add_tag(TAG_MOUNTED);
+        });
       }
     })
   }

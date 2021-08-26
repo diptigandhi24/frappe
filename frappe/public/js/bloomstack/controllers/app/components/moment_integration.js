@@ -8,7 +8,7 @@ export class MomentIntegrationComponent extends ComponentDependencies(BootInfoCo
   on_boot() {
     moment.locale("en");
     moment.user_utc_offset = moment().utcOffset();
-    if(frappe.boot.timezone_info) {
+    if (frappe.boot.timezone_info) {
       moment.tz.add(frappe.boot.timezone_info);
     }
   }

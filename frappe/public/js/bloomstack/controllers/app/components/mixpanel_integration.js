@@ -1,5 +1,6 @@
 import { ComponentDependencies } from "../../../compose";
 import { BootInfoComponent } from "./boot_info";
+import { EVT_INIT } from "../../../events";
 
 /**
  * Enables https://mixpanel.com analytics integration for backend user tracking.
@@ -11,8 +12,8 @@ import { BootInfoComponent } from "./boot_info";
  * }
  */
 export class MixpanelIntegrationComponent extends ComponentDependencies(BootInfoComponent) {
-  on_init() {
-    if(window.mixpanel) {
+	[EVT_INIT]() {
+		if (window.mixpanel) {
 			window.mixpanel.identify(frappe.session.user);
 			window.mixpanel.people.set({
 				"$first_name": frappe.boot.user.first_name,
@@ -21,5 +22,5 @@ export class MixpanelIntegrationComponent extends ComponentDependencies(BootInfo
 				"$email": frappe.session.user
 			});
 		}
-  }
+	}
 }

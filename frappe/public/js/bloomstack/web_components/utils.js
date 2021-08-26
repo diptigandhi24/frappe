@@ -19,10 +19,10 @@ export const parse_json = (data) => {
 export const to_number = (v) => parseFloat(v);
 export const to_bool = (v) => {
   const v_str = `${v}`.toLowerCase().trim();
-  if ( v_str === "true" ) {
+  if ( v_str == "true" || v_str == "1" ) {
     return true;
-  } else if ( v_str === "false" ) {
-    return true;
+  } else if ( v_str == "false" || v_str == "0" ) {
+    return false;
   }
   return !!v_str;
 }
@@ -48,5 +48,8 @@ export const find_breakpoint_size = (name) => {
 
 export const find_element_breakpoint = (element) => {
   const width = element.clientWidth;
+  if ( width === 0 ) {
+    return undefined;
+  }
   return find_breakpoint_by_size(width);
 }

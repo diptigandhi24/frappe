@@ -1,4 +1,5 @@
 import { Compose, withMixins } from "../../compose";
+import { EVT_AFTER_INIT } from "../../events";
 import { VueSetupComponent } from "./components/vue_setup";
 import { BootInfoComponent } from "./components/boot_info";
 import { MetadataCacheComponent } from "./components/metadata_cache";
@@ -77,7 +78,7 @@ export class Application extends Compose(
   BreadcrumbsComponent
 ) {
 
-  async on_after_init() {
+  async [EVT_AFTER_INIT]() {
     // route to home page
     frappe.route();
 

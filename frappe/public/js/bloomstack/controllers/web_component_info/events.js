@@ -1,0 +1,1 @@
+export const EVT_COMPONENT_UPDATE = Symbol("component_update");
