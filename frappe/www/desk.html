@@ -51,7 +51,7 @@
 			<b-navbar id="top-nav"
 				direction="row"
 				size="32px"
-				[xm]visible="false"
+				[xs]visible="false"
 				[md]visible="true"
 				theme="light"
 			>
@@ -67,7 +67,6 @@
 			theme="light"
 			direction="column"
 			size="24px"
-			theme="clean"
 			[xs]visible="false"
 			[md]visible="true"
 		>
@@ -75,7 +74,23 @@
 			<b-icon icon="comment-discussion" size="24px"></b-icon>
 			<b-icon icon="git-branch" size="24px"></b-icon>
 		</b-navbar>
-		<footer></footer>
+		<footer>
+			<b-navbar
+				id="mobile-nav"
+				theme="dark"
+				direction="row"
+				align="space-between"
+				size="64px"
+				[xs]visible="true"
+				[md]visible="false"
+			>
+				<b-icon icon="three-bars"></b-icon>
+				<b-icon icon="search"></b-icon>
+				<b-navlogo label="Home" size="64px"></b-navlogo>
+				<b-icon icon="person"></b-icon>
+				<b-icon icon="comment-discussion"></b-icon>
+			</b-navbar>
+		</footer>
 	</div>
 
 	<script type="text/javascript" src="/assets/frappe/js/lib/jquery/jquery.min.js"></script>

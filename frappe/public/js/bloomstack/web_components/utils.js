@@ -26,6 +26,14 @@ export const to_bool = (v) => {
   }
   return !!v_str;
 }
+export const enums = function(...values) {
+  return (v) => {
+    if ( values.includes(v) ) {
+      return v;
+    }
+    return undefined;
+  }
+}
 
 export const list_breakpoints = () => {
   return bloomstack.breakpoints;

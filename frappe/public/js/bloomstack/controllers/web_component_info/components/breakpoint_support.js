@@ -1,11 +1,34 @@
 import { Component } from "../../../compose";
 import { EVT_COMPONENT_UPDATE } from "../events";
 import { find_breakpoint_by_size } from "../../../web_components/utils";
+import { EVT_CONSTRUCT } from "../../../events";
 
 export class BreakpointSupportComponent extends Component {
+
+  [EVT_CONSTRUCT]() {
+    // tracks if a breakpoint attribute was detected. Used to skip breakpoint updates
+    // on components that do not use them or which attributes are removed at runtime.
+    this.has_bp_attribute = false;
+  }
+
+  /**
+   * Utility method. Called by web components controller when the viewport has been resized.
+   */
   update_breakpoint() {
-    // TODO: Trigger updates only if breakpoints are defined
-    this.parent.element.update();
+    let has_bp_attribute = false;
+    for(let i=0; i < this.parent.element.attributes.length; i++) {
+      const attr = this.parent.element.attributes[i];
+      if ( attr.specified ) {
+        has_bp_attribute = true;
+        break;
+      }
+    }
+
+    // only update if breakpoint attribute exist or last update had them
+    if ( has_bp_attribute  || this.has_bp_attribute ) {
+      this.has_bp_attribute = has_bp_attribute;
+      this.parent.element.update();
+    }
   }
 
   /**
@@ -63,9 +86,9 @@ export class BreakpointSupportComponent extends Component {
           const attr_breakpoint = this.find_attr_closest_breakpoint(prop, breakpoint);
 
           if ( attr_breakpoint ) {
-            const bp_prop = `[${attr_breakpoint.name}]${prop}`;
-            const bp_prop_value = this.parent.element.getAttribute(bp_prop);
-            this.parent.set_attribute(prop, bp_prop_value);
+            const bp_attr = `[${attr_breakpoint.name}]${prop}`;
+            const bp_attr_value = this.parent.element.getAttribute(bp_attr);
+            this.parent.set_attribute(prop, bp_attr_value);
           }
         }
       }

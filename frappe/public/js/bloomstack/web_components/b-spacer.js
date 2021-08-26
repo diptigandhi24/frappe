@@ -7,7 +7,7 @@ make_js_component({
     flex: 1 1 auto;
   }
   `,
-  component: (props, mountpoint) => {
+  component: (props) => {
     // nothing to render, just a spacer
   }
 })

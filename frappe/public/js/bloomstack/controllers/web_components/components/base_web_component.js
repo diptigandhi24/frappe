@@ -103,7 +103,7 @@ export class BaseWebComponentComponent extends ComponentDependencies(ParentCompo
           return;
         }
         const props = Object.fromEntries(this.__web_component.props);
-        Reflect.set(props, "$web_component", this);
+        Reflect.set(props, "$web_component", this.__web_component);
 
         await _broadcast(EVT_RENDER, this.__web_component, props);
         await _broadcast(`${config.type}_render`, this.__web_component, props);

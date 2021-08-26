@@ -3,9 +3,10 @@ import { TaggedComponent } from "../../components/tagged";
 import { Compose, withMixins } from "../../compose";
 import { TAG_INITIALIZED, TAG_MOUNTED } from "../../tags";
 import { EVT_INIT, EVT_CONSTRUCT, EVT_AFTER_INIT } from "../../events";
-import { EVT_COMPONENT_UPDATE } from "./events";
-import { EVT_UPDATE } from "../web_components/events";
+import { EVT_COMPONENT_UPDATE, EVT_COMPONENT_MOUNT } from "./events";
+import { EVT_UPDATE, EVT_MOUNT } from "../web_components/events";
 import { BreakpointSupportComponent } from "./components/breakpoint_support";
+import { ContextComponent } from "./components/context";
 
 /**
  * A facade controller for web components. Abstracts implementation details from different
@@ -16,6 +17,10 @@ export class WebComponentInfo extends Compose(
   TaggedComponent,
   withMixins(BreakpointSupportComponent,
     "update_breakpoint"
+  ),
+  withMixins(ContextComponent,
+    "get_context",
+    "set_context"
   )
 ) {
   [EVT_CONSTRUCT](element, shadow, config) {
@@ -116,6 +121,12 @@ export class WebComponentInfo extends Compose(
   [EVT_UPDATE](component) {
     if ( component === this) {
       this.broadcast(EVT_COMPONENT_UPDATE);
+    }
+  }
+
+  [EVT_MOUNT](component) {
+    if ( component === this) {
+      this.broadcast(EVT_COMPONENT_MOUNT);
     }
   }
 }

@@ -13,19 +13,28 @@ make_js_component({
     icon: to_str,
     lib: to_str,
     size: to_str,
-    padding: to_str
+    padding: to_str,
+    contexts: ["container"]
   },
-  component: ({ icon, lib, size, padding }, mountpoint) => {
+  component: ({ icon, lib, size, padding, $web_component }, mountpoint) => {
+    const container_ctx = $web_component.get_context("container");
+    if ( container_ctx ) {
+      if ( !size && container_ctx.size ) {
+        size = container_ctx.size;
+      }
+    }
     const library = lib ? lib : "octicon";
     const pxsize = size || '1rem';
     mountpoint.style = `min-width: ${pxsize}; min-height: ${pxsize};`;
     const style = {};
+
     if (padding) {
       style["--v-padding"] = padding;
     }
     if (size) {
       style["--v-size"] = size;
     }
+
     const strStyle = Object.entries(style).reduce((p, c) => {
       if (c && c[0] && c[1]) {
         p.push(`${c[0]}: ${c[1]};`);

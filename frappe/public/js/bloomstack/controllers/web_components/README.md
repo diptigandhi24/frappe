@@ -2,14 +2,16 @@
 
 The web component controller is at the heart of our micro frontends approach to encapsulates and wrap common ui libraries into isolated web components.
 
-Web components built this controller have the following features:
+Web components built with this controller have the following features:
 
 - Automatic two way attribute to prop bindings
 - Automatic re-renderig on attribute changes
-- Attributes may be prefixed with a breakpoint to define values at different states of the ui.
+- Attributes may be prefixed with a breakpoint to define values at different states of the ui. Ex: `<b-component [xs]my-attribute="extra small value" />`
 - Encapsulation via `open` or `closed` web components
 - Can inject style source data
 - Can define external css resources
+- Asynchronous rendering
+- Debounced rendering
 
 ## Wrapping a react component
 
@@ -71,7 +73,7 @@ make_react_component({
 
 ### Breakpoint prefix
 
-We support the following screen breakpoints following along bootstrap values. Breakpoints triger in a cascading fashion from smallest to largest:
+We support the following viewport based breakpoints following along bootstrap values. Breakpoints triger in a cascading fashion from smallest to largest:
 
 | breakpoint | width |
 |:-:|-|
