@@ -2,9 +2,9 @@ import { ChildComponent } from "../../components/child";
 import { TaggedComponent } from "../../components/tagged";
 import { Compose, withMixins } from "../../compose";
 import { TAG_INITIALIZED, TAG_MOUNTED } from "../../tags";
-import { EVT_INIT, EVT_CONSTRUCT, EVT_AFTER_INIT } from "../../events";
+import { EVT_INIT, EVT_CONSTRUCT, EVT_AFTER_INIT, EVT_BROADCAST } from "../../events";
 import { EVT_COMPONENT_UPDATE, EVT_COMPONENT_MOUNT } from "./events";
-import { EVT_UPDATE, EVT_MOUNT } from "../web_components/events";
+import { EVT_UPDATE, EVT_MOUNT, EVT_SET_ATTRIBUTE } from "../web_components/events";
 import { BreakpointSupportComponent } from "./components/breakpoint_support";
 import { ContextComponent } from "./components/context";
 
@@ -90,7 +90,11 @@ export class WebComponentInfo extends Compose(
    * @param {string} name The attribute name
    * @param {*} value The attribute value
    */
-  async set_attribute(name, value) {
+  async set_attribute(name, value, render) {
+    if ( render === undefined ) {
+      render = true;
+    }
+
     const conv = this.types.get(name);
     if ( typeof conv === "function" ) {
       value = conv(value);
@@ -99,8 +103,17 @@ export class WebComponentInfo extends Compose(
     const current_value = this.props.get(name);
     if ( value != current_value ) {
       this.props.set(name, value);
-      await this.broadcast("set_attribute", this, name, current_value, value);
-      await this.element.update();
+      await this.broadcast(EVT_SET_ATTRIBUTE, this, name, current_value, value);
+
+      if ( this.config.on_prop && Reflect.has(this.config.on_prop, name) ) {
+        try {
+          await Promise.resolve(this.config.on_prop[name](this, current_value, value));
+        } catch(err) {
+          console.error(err);
+        }
+      }
+      
+      await this.element.update(render);
     }
   }
 
@@ -127,6 +140,16 @@ export class WebComponentInfo extends Compose(
   [EVT_MOUNT](component) {
     if ( component === this) {
       this.broadcast(EVT_COMPONENT_MOUNT);
+    }
+  }
+
+  async [EVT_BROADCAST](event, ...args) {
+    if ( this.config.events && Reflect.has(this.config.events, event) ) {
+      try {
+        await Promise.resolve(this.config.events[event](...args));
+      } catch(err) {
+        console.error(err);
+      }
     }
   }
 }

@@ -14,7 +14,7 @@ import { with_debounce } from "../../../utils";
 export class BaseWebComponentComponent extends ComponentDependencies(ParentComponent) {
   on_define_prop(component, key, conv) {
     component.define_attribute(key, conv);
-    Reflect.defineProperty(component, key, {
+    Reflect.defineProperty(component.element, key, {
       get() {
         return component.props.get(key);
       },
@@ -161,7 +161,7 @@ export class BaseWebComponentComponent extends ComponentDependencies(ParentCompo
           `;
 
           this.__web_component.mountpoint = this.__web_component.shadow.getElementById("__mountpoint");
-          this.__web_component[ChildComponent].bubble_event(EVT_SET_ATTRIBUTE);
+          //this.__web_component[ChildComponent].bubble_event(EVT_SET_ATTRIBUTE);
           await this.__web_component[TaggedComponent].add_tag(TAG_WEB_COMPONENT);
 
           // apply attributes before rendering for the first time.

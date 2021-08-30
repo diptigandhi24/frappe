@@ -34,6 +34,8 @@ export const enums = function(...values) {
     return undefined;
   }
 }
+export const passthrough = (x) => x;
+export const prop_to_dom_event_map = (event, event_dict) => (wc, old, value) => wc.element.dispatchEvent(new Event(event, event_dict))
 
 export const list_breakpoints = () => {
   return bloomstack.breakpoints;

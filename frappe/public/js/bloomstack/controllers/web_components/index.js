@@ -33,6 +33,8 @@ bloomstack.web_ready = bloomstack.web.init();
  * @param {function}  config.component A component implementation function to render
  * @param {string}    config.mode Set to "closed" to build a private shadow dom. Defaults to open.
  * @param {number}    config.render_debounce_timeout Sets a rendering debounce timeout. Defaults to 50 milliseconds.
+ * @param {object}    config.events Web Component internal event handlers.
+ * @param {object}    config.on_prop An object containing prop change event handlers. { prop: (wc, old, value) => {} }
  */
 export const make_react_component = async (...args) => {
   await bloomstack.web_ready;

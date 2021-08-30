@@ -1,0 +1,11 @@
+input {
+  background: transparent;
+  border: none;
+  flex: 1 1 auto;
+  display: inline-block;
+
+  &:focus {
+    border: none;
+    outline: none;
+  }
+}
