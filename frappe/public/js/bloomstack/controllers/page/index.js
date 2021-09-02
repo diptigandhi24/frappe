@@ -684,4 +684,6 @@ class Page extends Compose(
 	}
 }
 
+Page.ignore_init_guard = true;
+
 frappe.ui.Page = Page;

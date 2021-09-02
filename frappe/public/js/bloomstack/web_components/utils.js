@@ -7,7 +7,7 @@ bloomstack.breakpoints = [
   {name: "xxl", size: 1400}
 ];
 
-export const to_str = (v) => v?`${v}`:undefined;
+export const to_str = (v) => (typeof v !== "undefined" && v !== null)?`${v}`:undefined;
 export const parse_json = (data) => {
   try {
     return JSON.parse(data);
@@ -36,6 +36,22 @@ export const enums = function(...values) {
 }
 export const passthrough = (x) => x;
 export const prop_to_dom_event_map = (event, event_dict) => (wc, old, value) => wc.element.dispatchEvent(new Event(event, event_dict))
+export const to_array = (x) => {
+  if ( x ) {
+    if ( Array.isArray(x) ) {
+      return x;
+    } else if ( typeof x === "string" ) {
+      try {
+        x = JSON.parse(x);
+        return to_array(x);
+      } catch(ex) {
+        // pass
+      }
+    }
+  }
+
+  return [];
+}
 
 export const list_breakpoints = () => {
   return bloomstack.breakpoints;

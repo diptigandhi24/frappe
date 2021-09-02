@@ -25,7 +25,6 @@ make_js_component({
     }
     const library = lib ? lib : "octicon";
     const pxsize = size || '1rem';
-    mountpoint.style = `min-width: ${pxsize}; min-height: ${pxsize};`;
     const style = {};
 
     if (padding) {
@@ -41,6 +40,9 @@ make_js_component({
       }
       return p;
     }, []).join('');
+
+    // resize parent web component container directly
+    mountpoint.style = `min-width: ${pxsize}; min-height: ${pxsize};`;
     mountpoint.innerHTML = `<i style="${strStyle}" class="${clsx(library, `${library}-${icon}`)}"></i>`
   }
 })

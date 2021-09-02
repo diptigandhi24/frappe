@@ -34,18 +34,16 @@
 		<b-navbar id="main-nav"
 			theme="dark"
 			direction="column"
-			size="64px"
+			[sm]size="32px"
+			[md]size="64px"
 			[xs]visible="false"
 			[md]visible="true"
 		>
 			<b-navlogo label="Home"></b-navlogo>
-			<b-navlogo></b-navlogo>
-			<b-navlogo></b-navlogo>
-			<b-navlogo></b-navlogo>
-			<b-navlogo></b-navlogo>
+
 			<b-spacer></b-spacer>
-			
-			<b-menu-item id="menu-user-profile" label="Settings"></b-menu-item>
+
+			<b-icon icon="person" padding="20px"></b-icon>
 		</b-navbar>
 		<header>
 			<b-navbar id="top-nav"
@@ -70,9 +68,9 @@
 			[xs]visible="false"
 			[md]visible="true"
 		>
-			<b-icon icon="bell" size="24px"></b-icon>
-			<b-icon icon="comment-discussion" size="24px"></b-icon>
-			<b-icon icon="git-branch" size="24px"></b-icon>
+			<b-icon icon="bell"></b-icon>
+			<b-icon icon="comment-discussion"></b-icon>
+			<b-icon icon="git-branch"></b-icon>
 		</b-navbar>
 		<footer>
 			<b-navbar

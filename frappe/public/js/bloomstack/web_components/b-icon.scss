@@ -1,16 +1,17 @@
 :host {
   --v-size: 24px;
   --v-padding: 8px;
-}
 
-#__mountpoint {
-  position: relative;
-}
+  #__mountpoint {
+    position: relative;
+  }
 
-I {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  font-size: calc(var(--v-size) - var(--v-padding)) !important;
+  I {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: calc(var(--v-size) - var(--v-padding)) !important;
+  }
+
 }

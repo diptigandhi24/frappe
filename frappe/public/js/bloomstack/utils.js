@@ -65,3 +65,32 @@ export const with_debounce = (fn, thisArg, timeout) => {
 
   }.bind(thisArg))
 }
+
+export const equals = (a, b) => {
+  if ( a === b ) {
+    return true;
+  }
+
+  if ( typeof a !== typeof b ) {
+    return false;
+  }
+
+  if ( Array.isArray(a) && Array.isArray(b) ) {
+    return a.length === b.length && a.every((e,i) => e === b[i]);
+  }
+
+  if ( a && typeof a === "object" && b && typeof b === "object" ) {
+    const a_keys = Object.keys(a);
+    const b_keys = Object.keys(b);
+    return equals(a_keys, b_keys) && a_keys.every((key) => a[key] === b[key]);
+  }
+
+  return a == b;
+}
+
+export const get_object_values = (obj) => {
+  return [
+    ...Object.values(obj),
+    ...Object.getOwnPropertySymbols(obj).map(s => Reflect.get(obj, s))
+  ];
+}

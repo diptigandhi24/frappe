@@ -131,39 +131,30 @@ export function Compose(...in_classes) {
         }
       }
 
-      const me = this;
-      const members = new Map();
-      const api_members = ["init", "broadcast", "on", "off", "one", "wait", "has_component", EVT_CONSTRUCT, EVT_BEFORE_INIT, EVT_INIT, EVT_AFTER_INIT];
-      return new Proxy(this, {
-        get: (target, prop, receiver) => {
-          const member = Reflect.get(target, prop, receiver);
-          if ( api_members.includes(prop) ) {
-            return member;
-          }
+      if (!this.constructor.ignore_init_guard) {
+        const api_members = ["init", "broadcast", "on", "off", "one", "wait", "has_component", EVT_CONSTRUCT, EVT_BEFORE_INIT, EVT_INIT, EVT_AFTER_INIT];
+        const init_guard = (thisArg, method) => {
+          return (function (...args) {
 
-          if ( typeof member === "function" ) {
-            if ( !members.has(member) ) {
-              members.set(member, new Proxy(member, {
-                apply: (target, thisArg, args) => {
-                  if ( !this.__initialized ) {
-                    throw new Error(`[${thisArg.constructor.name}.${target.name}] Can not call controller member until after init.`);
-                  }
-        
-                  return Reflect.apply(target, thisArg, args);
-                }
-              }));
+            if (!thisArg.__initialized) {
+              throw new Error(`[${thisArg.constructor.name}.${thisArg.name}] Can not call controller member until after init.`);
             }
 
-            return members.get(member);
-          }
-
-          return member;
+            return Reflect.apply(method, thisArg, args);
+          }.bind(thisArg));
         }
-      })
+
+        for (const property of [...Object.getOwnPropertyNames(this), ...Object.getOwnPropertySymbols(this)]) {
+          const member = Reflect.get(this, property);
+          if (!api_members.includes(property) && typeof member === "function") {
+            Reflect.set(this, property, init_guard(this, member));
+          }
+        }
+      }
     }
 
     async init() {
-      if ( this.__initialized ) {
+      if (this.__initialized) {
         return;
       }
 
@@ -187,7 +178,7 @@ export function Compose(...in_classes) {
      */
     get components() {
       const result = [];
-      for(const component_type of Array.from(this.__component_types.values())) {
+      for (const component_type of Array.from(this.__component_types.values())) {
         result.push(this.__components.get(component_type));
       }
       return result;
@@ -259,12 +250,11 @@ export function Compose(...in_classes) {
         if (Reflect.has(component, event_name)) {
           const fn = Reflect.get(component, event_name);
           await Promise.resolve(fn.apply(component, args));
-          //await Promise.resolve(Reflect.apply(fn, component, args));
         }
       }
 
-      if (this.__events.has(event)) {
-        for (const listener of this.__events.get(event).values()) {
+      if (event != EVT_BROADCAST && this.__events.has(event)) {
+        for (const listener of Array.from(this.__events.get(event).values())) {
           await Promise.resolve(listener(this, ...args));
         }
       }

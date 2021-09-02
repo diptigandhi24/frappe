@@ -1,0 +1,57 @@
+:host {
+  margin-top: -1px;
+
+  .autocomplete {
+    margin: 0;
+    padding: 0;
+
+    .content {
+      width: 100%;
+    }
+
+    .dropdown {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      z-index: 9999;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      border: 1px solid gray;
+
+      ul {
+        margin: 0;
+        padding: 0;
+
+        li {
+          list-style: none;
+          margin-bottom: 1px;
+          padding: 0;
+
+          &.group {
+            margin: 8px;
+
+            li {
+              background-color: lightgray;
+              padding: 5px 10px;
+              font-size: 1.3rem;
+              &:first-of-type, &:last-of-type {
+                border-radius: 5px;
+              }
+
+              &:first-of-type {
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+              }
+
+              &:last-of-type {
+                border-top-left-radius: 0;
+                border-top-right-radius: 0;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

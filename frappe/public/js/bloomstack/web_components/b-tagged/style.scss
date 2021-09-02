@@ -1,0 +1,17 @@
+:host {
+  display: flex;
+  flex: 1 1 auto;
+
+  #__mountpoint {
+    display: inline-flex;
+    flex-direction: row;
+  }
+  .tag {
+    background-color: lightgray;
+    border-radius: 2px;
+    font-size: .9rem;
+    align-self: center;
+    padding: 2px 4px;
+    margin: 2px;
+  }
+}

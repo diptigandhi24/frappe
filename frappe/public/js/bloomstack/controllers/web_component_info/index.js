@@ -7,6 +7,7 @@ import { EVT_COMPONENT_UPDATE, EVT_COMPONENT_MOUNT } from "./events";
 import { EVT_UPDATE, EVT_MOUNT, EVT_SET_ATTRIBUTE } from "../web_components/events";
 import { BreakpointSupportComponent } from "./components/breakpoint_support";
 import { ContextComponent } from "./components/context";
+import { equals } from "../../utils";
 
 /**
  * A facade controller for web components. Abstracts implementation details from different
@@ -101,7 +102,7 @@ export class WebComponentInfo extends Compose(
     }
 
     const current_value = this.props.get(name);
-    if ( value != current_value ) {
+    if ( !equals(value, current_value) ) {
       this.props.set(name, value);
       await this.broadcast(EVT_SET_ATTRIBUTE, this, name, current_value, value);
 

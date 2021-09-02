@@ -1,5 +1,7 @@
 :host {
   outline: none;
+  position: relative;
+  margin: 2px;
 }
 
 :host(:focus-within) {

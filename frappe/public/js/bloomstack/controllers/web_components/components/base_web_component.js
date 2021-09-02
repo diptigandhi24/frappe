@@ -63,7 +63,7 @@ export class BaseWebComponentComponent extends ComponentDependencies(ParentCompo
           config
         );
 
-        this.render = with_debounce(this.render, this, config.render_debounce_timeout || 50);
+        this.render = with_debounce(this.render, this, config.render_debounce_timeout || 5);
       }
 
       /**
@@ -130,6 +130,10 @@ export class BaseWebComponentComponent extends ComponentDependencies(ParentCompo
         }
 
         await _controller[ParentComponent].add_child_controller(this.__web_component);
+        // apply attributes before rendering for the first time.
+        for (const att of extended_observed_attributes) {
+          await this.__web_component.set_attribute(att, this.getAttribute(att), false);
+        }
         await this.__web_component.with_update(async () => {
           await _broadcast(EVT_INIT_ELEMENT, this.__web_component);
 
@@ -163,11 +167,6 @@ export class BaseWebComponentComponent extends ComponentDependencies(ParentCompo
           this.__web_component.mountpoint = this.__web_component.shadow.getElementById("__mountpoint");
           //this.__web_component[ChildComponent].bubble_event(EVT_SET_ATTRIBUTE);
           await this.__web_component[TaggedComponent].add_tag(TAG_WEB_COMPONENT);
-
-          // apply attributes before rendering for the first time.
-          for (const att of extended_observed_attributes) {
-            await this.__web_component.set_attribute(att, this.getAttribute(att));
-          }
 
           const mountpoint = this.__web_component.mountpoint;
           await this.update(false);

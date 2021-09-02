@@ -17,4 +17,12 @@ export class Component {
   async broadcast(...args) {
     return await this.parent.broadcast(...args);
   }
+
+  async on(...args) {
+    return await this.parent.on(...args);
+  }
+
+  async off(...args) {
+    return await this.parent.off(...args);
+  }
 }
