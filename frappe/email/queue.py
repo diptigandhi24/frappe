@@ -424,7 +424,7 @@ def send_one(email, smtpserver=None, auto_commit=True, now=False, from_test=Fals
 				recipient.status = "Error"
 				continue
 
-			if recipient.recipient in ["Guest <guest@example.com>", "Administrator <admin@digithinkit.com>"]:
+			if recipient.recipient.lower().strip() in ["guest <guest@example.com>", "administrator <admin@digithinkit.com>"]:
 				recipient.status = "Error"
 			else:
 				message = prepare_message(email, recipient.recipient, recipients_list)
