@@ -9,3 +9,4 @@ import "./b-icon";
 import "./b-field";
 import "./b-input";
 import "./b-tagged";
+import "./b-infinite-container";

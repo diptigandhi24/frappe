@@ -1,0 +1,23 @@
+:host {
+  padding: 0;
+
+  #__mountpoint {
+    padding: 0;
+  }
+
+  .outter {
+    height: 100%;
+    overflow: hidden;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+  }
+
+  .container {
+    flex: 1 1 auto;
+    min-height: 100%;
+    overflow: auto;
+    padding: 0;
+  }
+}

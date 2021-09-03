@@ -20,7 +20,7 @@ export class DataSourceComponent extends Component {
   async get_rows(start, end, sort_model, filter_model) {
     const data = {
       rows: [],
-      last_row_index: null,
+      total: 0,
       errors: new Set()
     }
     await this.broadcast(EVT_GET_ROWS, start, end, sort_model, filter_model, data);

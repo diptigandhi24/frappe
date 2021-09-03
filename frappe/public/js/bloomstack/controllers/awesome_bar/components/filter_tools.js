@@ -132,10 +132,13 @@ export class FilterToolsComponent extends ComponentDependencies(DataSourceCompon
         const result = Object.values(this.filters)
           .filter((f) => f.meta.tag.toLowerCase().indexOf(search) > -1);
         data.rows.push(...result);
+        data.total += result.length;
       }
     } else {
       if (this.filter_mode === FILTER_NONE) {
-        data.rows.push(...get_object_values(this.filters));
+        const result = get_object_values(this.filters);
+        data.rows.push(...result);
+        data.total += result.length;
       }
     }
   }

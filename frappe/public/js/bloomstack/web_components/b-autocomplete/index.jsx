@@ -17,15 +17,19 @@ make_react_component({
     target: passthrough,
     data_source: passthrough,
     sort_model: passthrough,
-    filter_model: passthrough
+    filter_model: passthrough,
+    item_renderer: passthrough
   },
-  component: ({ target, data_source, sort_model, filter_model }) => {
-    const [data, has_more, page, set_page] = use_data_source(data_source, 0, 20, sort_model, filter_model);
+  component: ({ target, data_source, sort_model, filter_model, item_renderer }) => {
+    const [start, set_start] = useState(0);
+    const [fetch_size, set_fetch_size] = useState(20);
+    const [data, has_more, page, set_page] = use_data_source(data_source, start, fetch_size, sort_model, filter_model);
     const [content_ref, content_width, content_height] = use_measure();
     const [display, set_display] = useState("None");
     const [dropdown_style, set_dropdown_style] = useState({});
     const [has_focus, set_has_focus] = useState(false);
     const [groups, set_groups] = useState([]);
+    const infinite_ref = useRef();
 
     // track target focus
     const focus_handler = useCallback((e) => {
@@ -81,15 +85,25 @@ make_react_component({
       }
     }, [set_groups, data]);
 
-    console.log(groups);
+    useEffect(() => {
+      if ( infinite_ref.current) {
+        infinite_ref.current.on_more_data = () => {
+          console.log("...Fetching more...", start);
+          set_start(start + fetch_size);
+          return true;
+        }
+      }
+    }, [infinite_ref]);
 
     return <div class="autocomplete" ref={content_ref}>
       <div class="content">
         <slot></slot>
         <div class="dropdown" style={dropdown_style}>
-          <ul>
-            {groups && groups.map((rows, i) => <AutoCompleteGroup key={i} rows={rows} />)}
-          </ul>
+          <b-infinite-container ref={infinite_ref}>
+            <ul>
+              {groups && groups.map((rows, i) => <AutoCompleteGroup key={i} rows={rows} renderer={item_renderer} />)}
+            </ul>
+          </b-infinite-container>
         </div>
       </div>
     </div>
