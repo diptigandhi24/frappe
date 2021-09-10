@@ -1,0 +1,25 @@
+:host {
+  #__mountpoint {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    grid:
+      "top top" auto
+      "label actions" auto;
+
+    .type {
+      text-align: right;
+      grid-area: top;
+      font-size: .8ref;
+      font-weight: bold;
+    }
+
+    .label {
+      grid-area: label;
+    }
+
+    .actions {
+      grid-area: actions;
+    }
+  }
+}

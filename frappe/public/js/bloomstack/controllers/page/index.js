@@ -23,8 +23,15 @@ import "../../web_components";
 
 
 frappe.ui.make_app_page = function(opts) {
+	console.warn("frappe.ui.make_app_page will be depricated in the near future. Use the async version frappe.ui.make_app_page_async instead");
 	opts.parent.page = new frappe.ui.Page(opts);
 	opts.parent.page.init();
+	return opts.parent.page;
+}
+
+frappe.ui.make_app_page_async = async function(opts) {
+	opts.parent.page = new frappe.ui.Page(opts);
+	await opts.parent.page.init();
 	return opts.parent.page;
 }
 
@@ -684,6 +691,8 @@ class Page extends Compose(
 	}
 }
 
+// bypass controller init event guard to allow building pages
+// the old way(sync).
 Page.ignore_init_guard = true;
 
 frappe.ui.Page = Page;

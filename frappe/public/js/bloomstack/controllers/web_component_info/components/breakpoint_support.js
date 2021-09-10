@@ -75,7 +75,7 @@ export class BreakpointSupportComponent extends Component {
     return undefined;
   }
 
-  [EVT_COMPONENT_UPDATE]() {
+  async [EVT_COMPONENT_UPDATE]() {
     const breakpoint = find_breakpoint_by_size(window.innerWidth);
 
     if (this.parent.config.props) {

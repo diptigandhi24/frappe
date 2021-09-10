@@ -1,25 +1,30 @@
 import { useEffect, useRef, useCallback, useState } from "react";
-import { make_react_component } from "../controllers/web_components";
-import style from "./b-awesome-bar.scss";
-import { AwesomeBar } from "../controllers/awesome_bar";
+import { make_react_component } from "../../controllers/web_components";
+import style from "./style.scss";
+import { AwesomeBar } from "../../controllers/awesome_bar";
 import {
   FILTER_MODULE,
   FILTER_DOCTYPE,
   FILTER_REPORT,
   FILTER_NONE
-} from "../controllers/awesome_bar/constants"
-import { EVT_VALUE_CHANGE, EVT_MODE_CHANGE, EVT_FILTER_MODEL_CHANGE } from "../controllers/awesome_bar/events"
-import { FilterToolsComponent } from "../controllers/awesome_bar/components/filter_tools";
-import { equals } from "../utils";
+} from "../../controllers/awesome_bar/constants"
+import { EVT_VALUE_CHANGE, EVT_MODE_CHANGE, EVT_FILTER_MODEL_CHANGE } from "../../controllers/awesome_bar/events"
+import { FilterToolsComponent } from "../../controllers/awesome_bar/components/filter_tools";
+import { equals } from "../../utils";
+import { is_ref_valid } from "../utils";
 
 make_react_component({
-  tag: "b-awesome-bar",
+  tag: "b-awesomebar",
   style,
   component: ({ $web_component }) => {
     const input_ref = useRef();
     const [inner_input_ref, set_inner_input_ref] = useState();
     const auto_complete_ref = useRef();
     const [controller, set_controller] = useState(null);
+
+    const item_renderer = useCallback((item) => {
+      return { tag: "b-awesomebar-item", props: { item }};
+    }, []);
 
     // handles storing the b-input inner input element reference so we can
     // manipulate its value while in managed mode.
@@ -57,23 +62,24 @@ make_react_component({
 
     // Insert controller mode as a tag on the input
     const controller_mode_change_handler = useCallback((controller, mode, label) => {
-      if (controller && input_ref) {
+      if (controller && is_ref_valid(input_ref)) {
         if (mode !== FILTER_NONE) {
           input_ref.current.tags = [{ label }];
         } else {
           input_ref.current.tags = [];
         }
       }
-    }, [controller, input_ref]);
+    }, [controller, is_ref_valid(input_ref)]);
 
     const controller_filter_model_change_handler = useCallback((controller) => {
-      if ( auto_complete_ref ) {
+      if ( is_ref_valid(auto_complete_ref) ) {
+        const auto_complete = auto_complete_ref.current;
         const filter_model = controller.filter_model;
-        if ( !equals(auto_complete_ref.current.filter_model, filter_model) ) {
-          auto_complete_ref.current.filter_model = filter_model;
+        if ( filter_model && auto_complete.filter_model && !equals(auto_complete.filter_model, filter_model) ) {
+          auto_complete.filter_model = filter_model;
         }
       }
-    }, [auto_complete_ref])
+    }, [is_ref_valid(auto_complete_ref), controller])
 
     // controller evets setup
     useEffect(() => {
@@ -105,15 +111,17 @@ make_react_component({
     // hook up autocomplete attributes manually.
     // we must set their attributes via a ref and properties due to how react handles attributes and events.
     useEffect(() => {
-      if (auto_complete_ref, controller) {
+      if ( controller && is_ref_valid(auto_complete_ref) ) {
+        const auto_complete = auto_complete_ref.current;
         // pass data source to autocomplete
-        auto_complete_ref.current.target = $web_component.element;
-        auto_complete_ref.current.data_source = controller.get_data_source();
+        auto_complete.target = $web_component.element;
+        auto_complete.data_source = controller.get_data_source();
         // pass filter and sort models to auto complete
-        auto_complete_ref.current.filter_model = controller.filter_model;
-        auto_complete_ref.current.sort_model = controller.sort_model;
+        auto_complete.filter_model = controller.filter_model;
+        auto_complete.sort_model = controller.sort_model;
+        auto_complete.item_renderer = item_renderer;
       }
-    }, [auto_complete_ref, controller, $web_component])
+    }, [controller, is_ref_valid(auto_complete_ref), item_renderer]);
 
     // Wait for awesomebar controller to initialize
     useEffect(async () => {

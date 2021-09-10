@@ -13,20 +13,20 @@ import { with_debounce } from "../../../utils";
 
 export class BaseWebComponentComponent extends ComponentDependencies(ParentComponent) {
   on_define_prop(component, key, conv) {
-    component.define_attribute(key, conv);
     Reflect.defineProperty(component.element, key, {
       get() {
         return component.props.get(key);
       },
-      async set(v) {
+      set(v) {
         component.set_attribute(key, v);
       }
     });
 
     // pickup values already set on element.
     const current_value = component.element.getAttribute(key);
-    const current_transformed_value = typeof conv === "function" ? conv(current_value) : current_value;
-    component.props.set(key, current_transformed_value);
+    if ( current_value !== undefined && current_value !== null ) {
+      component.set_attribute(key, current_value, false);
+    }
   }
 
   async [EVT_INIT_ELEMENT](component) {
@@ -129,19 +129,20 @@ export class BaseWebComponentComponent extends ComponentDependencies(ParentCompo
           return;
         }
 
+        await this.__web_component.init();
         await _controller[ParentComponent].add_child_controller(this.__web_component);
         // apply attributes before rendering for the first time.
         for (const att of extended_observed_attributes) {
-          await this.__web_component.set_attribute(att, this.getAttribute(att), false);
+          if ( this.hasAttribute(att) ) {
+            const value = this.getAttribute(att);
+            if ( value ) {
+              this.__web_component.set_attribute(att, value, false);
+            }
+          }
         }
         await this.__web_component.with_update(async () => {
           await _broadcast(EVT_INIT_ELEMENT, this.__web_component);
 
-          for (const attr of extended_observed_attributes) {
-            if ( this.hasAttribute(attr) ) {
-              this.__web_component.set_attribute(attr, this.getAttribute(attr));
-            }
-          }
           const props = Object.fromEntries(this.__web_component.props);
           const stylesheets_list = (typeof this.__web_component.config.stylesheets === "function") ? this.__web_component.config.stylesheets(props) : this.__web_component.config.stylesheets;
           const scripts_list = (typeof this.__web_component.config.scripts === "function") ? this.__web_component.config.scripts(props) : this.__web_component.config.scripts;

@@ -24,13 +24,21 @@ export class WebComponentInfo extends Compose(
     "set_context"
   )
 ) {
-  [EVT_CONSTRUCT](element, shadow, config) {
+
+  constructor(element, shadow, config) {
+    super(element, shadow, config);
     this.element = element;
     this.shadow = shadow;
     this.config = config;
     this.props = new Map();
     this.types = new Map();
     this.pause_rendering = 0;
+
+    if ( config.props ) {
+      for (const key of Object.keys(config.props)) {
+        this.define_attribute(key, Reflect.get(config.props, key));
+      }
+    }
   }
 
   /**
@@ -60,7 +68,6 @@ export class WebComponentInfo extends Compose(
    * Returns true if component is mounted
    */
   get is_mounted() {
-    console.log(this.components);
     return this[TaggedComponent].has_tag(TAG_MOUNTED);
   }
 
@@ -91,30 +98,35 @@ export class WebComponentInfo extends Compose(
    * @param {string} name The attribute name
    * @param {*} value The attribute value
    */
-  async set_attribute(name, value, render) {
-    if ( render === undefined ) {
+  set_attribute(name, value, render) {
+    if (render === undefined) {
       render = true;
     }
 
+    if (!this.types.has(name)) {
+      return;
+    }
+
     const conv = this.types.get(name);
-    if ( typeof conv === "function" ) {
+    if (typeof conv === "function") {
       value = conv(value);
     }
 
     const current_value = this.props.get(name);
-    if ( !equals(value, current_value) ) {
-      this.props.set(name, value);
-      await this.broadcast(EVT_SET_ATTRIBUTE, this, name, current_value, value);
 
-      if ( this.config.on_prop && Reflect.has(this.config.on_prop, name) ) {
-        try {
-          await Promise.resolve(this.config.on_prop[name](this, current_value, value));
-        } catch(err) {
-          console.error(err);
-        }
-      }
-      
-      await this.element.update(render);
+    if (!equals(value, current_value)) {
+      this.props.set(name, value);
+      this.element.update(render);
+      return this.broadcast(EVT_SET_ATTRIBUTE, this, name, current_value, value)
+        .then(async () => {
+          if (this.config.on_prop && Reflect.has(this.config.on_prop, name)) {
+            try {
+              await Promise.resolve(this.config.on_prop[name](this, current_value, value));
+            } catch (err) {
+              console.error(err);
+            }
+          }
+        });
     }
   }
 
@@ -133,22 +145,22 @@ export class WebComponentInfo extends Compose(
    * @param {*} component 
    */
   [EVT_UPDATE](component) {
-    if ( component === this) {
+    if (component === this) {
       this.broadcast(EVT_COMPONENT_UPDATE);
     }
   }
 
   [EVT_MOUNT](component) {
-    if ( component === this) {
+    if (component === this) {
       this.broadcast(EVT_COMPONENT_MOUNT);
     }
   }
 
   async [EVT_BROADCAST](event, ...args) {
-    if ( this.config.events && Reflect.has(this.config.events, event) ) {
+    if (this.config.events && Reflect.has(this.config.events, event)) {
       try {
         await Promise.resolve(this.config.events[event](...args));
-      } catch(err) {
+      } catch (err) {
         console.error(err);
       }
     }

@@ -79,3 +79,9 @@ export const find_element_breakpoint = (element) => {
   }
   return find_breakpoint_by_size(width);
 }
+
+/**
+ * React helper shorthand to check wether a reference has resolved
+ * @param {*} ref 
+ */
+export const is_ref_valid = (ref) => ref && ref.current

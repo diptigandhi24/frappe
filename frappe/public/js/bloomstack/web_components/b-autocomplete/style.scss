@@ -9,8 +9,8 @@
       width: 100%;
     }
 
-    b-infinite-container {
-      max-height: 400px;
+    b-infinite-scroller {
+      max-height: 200px;
     }
 
     .dropdown {
@@ -22,6 +22,7 @@
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
       border: 1px solid gray;
+      padding: 8px 0;
 
       ul {
         margin: 0;
@@ -33,24 +34,26 @@
           padding: 0;
 
           &.group {
-            margin: 8px;
+            margin: 0 8px 8px 8px;
+
+            &:last-of-type {
+              margin-bottom: 0;
+            }
 
             li {
               background-color: lightgray;
               padding: 5px 10px;
               font-size: 1.3rem;
-              &:first-of-type, &:last-of-type {
-                border-radius: 5px;
-              }
+              border-radius: 0;
 
               &:first-of-type {
-                border-bottom-left-radius: 0;
-                border-bottom-right-radius: 0;
+                border-top-left-radius: 5px;
+                border-top-right-radius: 5px;
               }
 
               &:last-of-type {
-                border-top-left-radius: 0;
-                border-top-right-radius: 0;
+                border-bottom-left-radius: 5px;
+                border-bottom-right-radius: 5px;
               }
             }
           }

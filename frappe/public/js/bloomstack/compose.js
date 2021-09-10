@@ -216,6 +216,14 @@ export function Compose(...in_classes) {
       return this;
     }
 
+    /**
+     * Returns a promise while it waits for an event to be triggered.
+     * @param {symbol | string} event
+     * @example
+     * // pause processing until an event is triggered.
+     * await this.wait("has_data");
+     * // ... code to run after evet is triggered ...
+     */
     wait(event) {
       let _resolve = null;
       const wait_promise = new Promise((resolve) => {
@@ -245,23 +253,31 @@ export function Compose(...in_classes) {
       const instances = [this, ...this.components];
 
       this.broadcast_history.push(event_name);
+      const component_promises = [];
+      const event_promises = [];
 
       for (const component of instances) {
         if (Reflect.has(component, event_name)) {
           const fn = Reflect.get(component, event_name);
-          await Promise.resolve(fn.apply(component, args));
-        }
-      }
-
-      if (event != EVT_BROADCAST && this.__events.has(event)) {
-        for (const listener of Array.from(this.__events.get(event).values())) {
-          await Promise.resolve(listener(this, ...args));
+          component_promises.push(Promise.resolve(fn.apply(component, args)));
         }
       }
 
       if (![EVT_BROADCAST, EVT_CONSTRUCT, EVT_BEFORE_INIT, EVT_INIT, EVT_AFTER_INIT].includes(event)) {
-        await this.broadcast(EVT_BROADCAST, event, ...args);
+        component_promises.push(Promise.resolve(this.broadcast(EVT_BROADCAST, event, ...args)));
       }
+
+      // wait for internal controller components to finish their processing first
+      await Promise.allSettled(component_promises);
+
+      if (event != EVT_BROADCAST && this.__events.has(event)) {
+        for (const listener of Array.from(this.__events.get(event).values())) {
+          event_promises.push(Promise.resolve(listener(this, ...args)));
+        }
+      }
+      // then wait third party event listeners
+      await Promise.allSettled(event_promises);
+
     }
   };
 }

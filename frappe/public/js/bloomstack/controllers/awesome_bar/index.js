@@ -54,8 +54,17 @@ export class AwesomeBar extends Compose(
       results = results.filter(r => r.type == filter_model["filter_by"]);
     }
 
-    data.total = results.length;
+    data.total += results.length;
     data.rows.push(...results.slice(start, end));
   }
 
+}
+
+const heavy = async (fn) => {
+  setTimeout(function() {
+    return fn();
+  }, 0);)
+  return new Promise((resolve, reject) => {
+
+  })
 }
