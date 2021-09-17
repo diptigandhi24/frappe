@@ -59,12 +59,3 @@ export class AwesomeBar extends Compose(
   }
 
 }
-
-const heavy = async (fn) => {
-  setTimeout(function() {
-    return fn();
-  }, 0);)
-  return new Promise((resolve, reject) => {
-
-  })
-}

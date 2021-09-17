@@ -21,11 +21,15 @@ export class Search extends Compose(
 ) {
   [EVT_CONSTRUCT]() {
     this.recent = [];
-    this.searchable_functions = [];
+		this.searchable_functions = [];
+		this.store = [];
   }
 
-  [EVT_INIT]() {
+  async [EVT_INIT]() {
 		this.recent = JSON.parse(frappe.boot.user.recent || "[]") || [];
+		
+		// build store cache
+		await this.broadcast(EVT_BUILD_STORE, this.store);
 	}
 
 	get_recent_pages(keywords) {

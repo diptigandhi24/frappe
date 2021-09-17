@@ -5,7 +5,8 @@
     "production": "FRAPPE_ENV=production node rollup/build.js",
     "watch": "node rollup/watch.js",
     "cypress:run": "cypress run --record --key 4a48f41c-11b3-425b-aa88-c58048fa69eb",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "doc:js": "jsdoc -c ./jsdoc.config.js -X"
   },
   "repository": {
     "type": "git",
@@ -65,6 +66,7 @@
     "cypress": "^3.1.1",
     "cypress-file-upload": "^3.1.0",
     "graphlib": "^2.1.8",
+    "jsdoc": "^3.6.7",
     "less": "^3.11.1",
     "rollup": "^1.2.2",
     "rollup-plugin-babel": "^4.4.0",

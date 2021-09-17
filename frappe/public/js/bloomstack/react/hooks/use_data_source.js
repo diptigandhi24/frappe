@@ -23,9 +23,9 @@ export const use_data_source = (data_source, default_block_size, sort_model, fil
     if (data_source && !loading) {
       const end = start + block_size;
       try {
-      set_loading(true);
-      const data = await data_source.get_rows(start, end, sort_model, filter_model);
-      set_data(data);
+        set_loading(true);
+        const data = await data_source.get_rows(start, end, sort_model, filter_model);
+        set_data(data);
       } finally {
         set_loading(false)
       }

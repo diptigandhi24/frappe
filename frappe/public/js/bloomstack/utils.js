@@ -94,3 +94,44 @@ export const get_object_values = (obj) => {
     ...Object.getOwnPropertySymbols(obj).map(s => Reflect.get(obj, s))
   ];
 }
+
+// Wrap old apis with new router controller
+export const api_property_wrap = (api_obj, api_name, map_to, map_to_name, can_get, can_set) => {
+  const map_to_api = Reflect.get(map_to, map_to_name || api_name);
+
+  Reflect.defineProperty(api_obj, api_name, {
+    get() {
+      if ( can_get ) {
+        return Reflect.get(map_to, map_to_name || api_name);
+      }
+
+      console.trace("API GET: ", api_name, " of ", api_obj, " get is deprecated.");
+      throw new Error("Deprecated API: ", api_name);
+    },
+    set(v) {
+      if ( can_set ) {
+        Reflect.set(map_to, map_to_name || api_name, v);
+      }
+
+      console.trace("API SET: ", api_name, " of ", api_obj, " set is deprecated.");
+      throw new Error("Deprecated API: ", api_name);
+    }
+  });
+}
+
+export const api_wrap = (api_obj, api_name, map_to, map_to_name, warning) => {
+  return (...args) => {
+    if ( warning ) {
+      console.trace(warning);
+    }
+    return Reflect.apply(Reflect.get(map_to, map_to_name || api_name), ...args);
+  }
+}
+
+const defer = async (fn) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(function() {
+      Promise.resolve(fn()).then(resolve).catch(reject);
+    }, 0);
+  });
+}

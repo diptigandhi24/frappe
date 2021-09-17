@@ -1,0 +1,1 @@
+export const EVT_BUILD_STORE = Symbol("build_store");
