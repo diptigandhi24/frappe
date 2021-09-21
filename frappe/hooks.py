@@ -264,7 +264,10 @@ setup_wizard_exception = [
 ]
 
 before_migrate = ['frappe.patches.v11_0.sync_user_permission_doctype_before_migrate.execute']
-after_migrate = ['frappe.website.doctype.website_theme.website_theme.generate_theme_files_if_not_exist']
+after_migrate = [
+	'frappe.website.doctype.website_theme.website_theme.generate_theme_files_if_not_exist',
+	'frappe.cognito.setup'
+]
 
 otp_methods = ['OTP App','Email','SMS']
 user_privacy_documents = [
