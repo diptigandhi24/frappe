@@ -6,7 +6,8 @@
     "watch": "node rollup/watch.js",
     "cypress:run": "cypress run --record --key 4a48f41c-11b3-425b-aa88-c58048fa69eb",
     "cypress:open": "cypress open",
-    "doc:js": "jsdoc -c ./jsdoc.config.js -X"
+    "doc:js": "jsdoc -c ./jsdoc.config.js -X",
+    "test":"jest"
   },
   "repository": {
     "type": "git",
@@ -66,6 +67,7 @@
     "cypress": "^3.1.1",
     "cypress-file-upload": "^3.1.0",
     "graphlib": "^2.1.8",
+    "jest": "^27.2.2",
     "jsdoc": "^3.6.7",
     "less": "^3.11.1",
     "rollup": "^1.2.2",
