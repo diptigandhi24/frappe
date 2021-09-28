@@ -1,8 +1,6 @@
 import { make_react_component } from "../../controllers/web_components";
 import { passthrough, is_ref_valid } from "../utils";
-import { useEffect } from "react";
-import { useState } from "react";
-import { useCallback } from "react";
+import { useEffect,useState,useCallback,useRef,useMemo } from "react";
 import style from "./style.scss";
 import { AutoCompleteItem } from "./auto_complete_item";
 import { use_data_source } from "../../react/hooks/use_data_source";
@@ -11,7 +9,7 @@ import { useRef } from "react";
 import { AutoCompleteGroup } from "./auto_complete_group";
 import { EVT_VALUE_CHANGE } from "../../controllers/awesome_bar/events";
 import { equals } from "../../utils";
-import { useMemo } from "react";
+
 
 make_react_component({
   tag: "b-autocomplete",
