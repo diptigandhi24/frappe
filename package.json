@@ -7,7 +7,7 @@
     "cypress:run": "cypress run --record --key 4a48f41c-11b3-425b-aa88-c58048fa69eb",
     "cypress:open": "cypress open",
     "doc:js": "jsdoc -c ./jsdoc.config.js -X",
-    "test":"jest ./frappe/public/js/bloomstack/react/hooks/"
+    "test":"jest ./frappe/public/js/bloomstack/"
   },
   "repository": {
     "type": "git",
@@ -67,7 +67,11 @@
     "cypress": "^3.1.1",
     "cypress-file-upload": "^3.1.0",
     "graphlib": "^2.1.8",
+<<<<<<< HEAD
     "jest": "^27.2.3",
+=======
+    "jest": "^27.2.2",
+>>>>>>> d1d46607277bea7b635dca71e0b09598ef992e47
     "jsdoc": "^3.6.7",
     "less": "^3.11.1",
     "rollup": "^1.2.2",
