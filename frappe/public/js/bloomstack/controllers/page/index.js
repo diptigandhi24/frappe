@@ -47,6 +47,7 @@ class Page extends Compose(
 		this.fields_dict = {};
 		this.views = {};
 
+		console.log("Calling make dom")
 		this.make();
 		frappe.ui.pages[frappe.get_route_str()] = this;
 	}
