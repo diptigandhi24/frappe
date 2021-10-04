@@ -54,7 +54,7 @@ describe("Testing the functions of Use_html hook",()=>{
     },
   ];   
     
-    test("Counting comle props",()=>{
+    test("Counting simle and complex props after segregating",()=>{
       const simple_types = ["string", "bigint", "number", "undefined"];
       let simple_props_count = 0;
       let complex_props_count = 0;
