@@ -61,7 +61,7 @@ describe("Testing the functions of Use_html hook",()=>{
       
       fakePropsData.map((obj) =>{ 
         const [simple_props, complex_props] = Object.entries(obj).reduce(segregateComplexSimpleProps, [{}, {}]);
-        console.log("lengths",Object.keys( simple_props).length,Object.keys(complex_props_count).length )
+        
         if(Object.keys( simple_props).length !== 0){
             simple_props_count ++;
         }
