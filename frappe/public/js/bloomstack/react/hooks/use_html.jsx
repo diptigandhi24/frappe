@@ -1,6 +1,4 @@
 import { useRef, useCallback, useMemo } from "react";
-import { useEffect } from "react";
-import { is_ref_valid } from "../../web_components/utils";
 
 export const use_html = (element) => {
   if ( element ) {
