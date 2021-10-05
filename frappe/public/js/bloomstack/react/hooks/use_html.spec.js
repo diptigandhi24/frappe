@@ -55,19 +55,16 @@ describe("Testing the functions of Use_html hook",()=>{
   ];   
     
     test("Counting simle and complex props after segregating",()=>{
-      const simple_types = ["string", "bigint", "number", "undefined"];
+
       let simple_props_count = 0;
       let complex_props_count = 0;
       
       fakePropsData.map((obj) =>{ 
-        const [simple_props, complex_props] = Object.entries(obj).reduce(segregateComplexSimpleProps, [{}, {}]);
+
+        const [simple_props, complex_props] = segregateComplexSimpleProps(obj);
+        simple_props_count = Object.keys(simple_props).length;
+        complex_props_count = complex_props_count + Object.keys(complex_props).length;
         
-        if(Object.keys( simple_props).length !== 0){
-            simple_props_count ++;
-        }
-        if(Object.keys(complex_props).length !== 0){
-          complex_props_count++;
-        }
         })
         
       expect(complex_props_count).toBe(4);
