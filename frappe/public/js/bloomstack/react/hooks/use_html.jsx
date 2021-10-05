@@ -11,20 +11,18 @@ export const use_html = (element) => {
 }
 
 const simple_types = ["string", "bigint", "number", "undefined"];
-let simple_props_count = 0;
-let complex_props_count = 0;
-export function segregateComplexSimpleProps(p, c){
-  const [simple, complex] = p;
-  const [key, value] = c;
-  if (simple_types.includes(typeof value)) {
-    simple_props_count++;
+
+export function segregateComplexSimpleProps(props){
+  return Object.entries(props).reduce((acc, propKeyValuePair)=>{        
+  const [simple, complex] = acc;
+  const [key, value] = propKeyValuePair;
+  if (simple_types.includes(typeof value)) {    
     Reflect.set(simple, key, value);
-  } else {
-    complex_props_count++;
+  } else {    
     Reflect.set(complex, key, value);
-  }        
-  return p;
-}
+  }
+  return acc;
+},[{},{}]);}
 
 
 export const convertToReact = (element) => {
@@ -39,9 +37,13 @@ export const convertToReact = (element) => {
       // separate simple props from complex ones. React will not pass objects or functions
       // cleanly. We'll set those through the node properties instead   
     
-     
-      const [simple_props, complex_props] = Object.entries(props).reduce(segregateComplexSimpleProps, [{}, {}]);
+      let simple_props_count = 0;
+      let complex_props_count = 0;
+      const [simple_props, complex_props] = segregateComplexSimpleProps(props);
               
+      simple_props_count = Object.keys(simple_props).length;
+      complex_props_count = Object.keys(complex_props).length;
+
       const addCustomSearchTypes = (node) => {
         if (node) {        
 
