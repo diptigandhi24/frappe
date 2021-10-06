@@ -5,7 +5,6 @@ import style from "./style.scss";
 import { AutoCompleteItem } from "./auto_complete_item";
 import { use_data_source } from "../../react/hooks/use_data_source";
 import { use_measure } from "../../react/hooks/use_measure";
-import { useRef } from "react";
 import { AutoCompleteGroup } from "./auto_complete_group";
 import { EVT_VALUE_CHANGE } from "../../controllers/awesome_bar/events";
 import { equals } from "../../utils";
