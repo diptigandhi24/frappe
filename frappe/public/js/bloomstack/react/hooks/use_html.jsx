@@ -1,4 +1,4 @@
-import { useRef, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 export const use_html = (element) => {
   if ( element ) {
@@ -13,6 +13,7 @@ export const use_html = (element) => {
 const simple_types = ["string", "bigint", "number", "undefined"];
 
 export function segregateComplexSimpleProps(props){
+
   return Object.entries(props).reduce((acc, propKeyValuePair)=>{        
   const [simple, complex] = acc;
   const [key, value] = propKeyValuePair;
@@ -22,7 +23,8 @@ export function segregateComplexSimpleProps(props){
     Reflect.set(complex, key, value);
   }
   return acc;
-},[{},{}]);}
+  },[{},{}]);
+}
 
 
 export const convertToReact = (element) => {
