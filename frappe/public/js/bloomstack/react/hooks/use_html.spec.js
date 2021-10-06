@@ -1,78 +1,33 @@
-import {segregateComplexSimpleProps} from "./use_html.jsx"
+import { segregateComplexSimpleProps } from "./use_html.jsx"
 
-describe("Testing the functions of Use_html hook",()=>{
+describe("Testing the functions of Use_html hook", () => {
 
-    let fakePropsData = [{
-      "item": {
-          "label": "Module:",
-          "group": "filters",
-          "index": -100,
-          "meta": {
-              "tag": "module:",
-              "filter_by": "Module",
-              "value": "module:"
-          }
-      }
-    },
-    {
-      "item": {
-          "label": "Doctype:",
-          "group": "filters",
-          "index": -99,
-          "meta": {
-              "tag": "doctype:",
-              "filter_by": "Doctype",
-              "value": "module:"
-          }
-      }
-    },
-    {
-      "item": {
-          "label": "Report:",
-          "group": "filters",
-          "index": -98,
-          "meta": {
-              "tag": "report:",
-              "filter_by": "Report",
-              "value": "module:"
-          }
-      },
-      
-    },
-    {
-      "item": {
-          "label": "Test:",
-          "group": "filters",
-          "index": -96,
-          "meta": {
-              "tag": "test:",
-              "filter_by": "Test",
-              "value": "module:"
-          }
-      },
-      
-    },
-  ];   
-    
-    test("Counting simle and complex props after segregating",()=>{
+  // test combinations broken into simple and complex
+  const simple = { simple1: 1, simple2: "simple" };
+  const complex = { complex1: {}, complex2: [] };
 
-      let simple_props_count = 0;
-      let complex_props_count = 0;
-      
-      fakePropsData.map((obj) =>{ 
+  test("counting simple and complex props", () => {
 
-        const [simple_props, complex_props] = segregateComplexSimpleProps(obj);
-        simple_props_count = Object.keys(simple_props).length;
-        complex_props_count = complex_props_count + Object.keys(complex_props).length;
-        
-        })
-        
-      expect(complex_props_count).toBe(4);
-    })
+    const testSimpleComplex = { ...simple, ...complex }
+    const [test1_simple_props, test1_complex_props] = segregateComplexSimpleProps(testSimpleComplex);
+    expect(test1_simple_props).toMatchObject(simple);
+    expect(test1_complex_props).toMatchObject(complex)
+  })
 
-        
-    
-    
+  test("counting complex props only", () => {
+    const test2_complex_props = { ...complex };
+    const [test_simple_props, test_complex_props] = segregateComplexSimpleProps(test2_complex_props);
+    expect(test_simple_props).toMatchObject({});
+    expect(test_complex_props).toMatchObject(test2_complex_props)
+  })
+
+  test("counting simple props only", () => {
+    const test3_simple_props = { ...simple };
+    const [test_simple_props, test_complex_props] = segregateComplexSimpleProps(test3_simple_props);
+    expect(test_simple_props).toMatchObject(test3_simple_props);
+    expect(test_complex_props).toMatchObject({})
+  })
+
 });
 
 
